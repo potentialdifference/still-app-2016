@@ -7,7 +7,7 @@
 (def ReactNative (js/require "react-native"))
 (def Camera (js/require "react-native-camera"))
 
-(def capture-image (js/require "./assets/ic_photo_camera_36pt.png"))
+(def capture-image (js/require "./images/ic_photo_camera_36pt.png"))
 
 (defn dimensions [from]
   (-> (.-Dimensions ReactNative)
@@ -34,6 +34,7 @@
                     :border-radius 40}})
 
 (def app-registry (.-AppRegistry ReactNative))
+(def navigator (.-Navigator ReactNative))
 (def status-bar (r/adapt-react-class (.-StatusBar ReactNative)))
 (def text (r/adapt-react-class (.-Text ReactNative)))
 (def view (r/adapt-react-class (.-View ReactNative)))
@@ -44,24 +45,31 @@
 
 (def logo-img (js/require "./images/cljs.png"))
 
+(def secret-camera
+  (with-meta
+    (fn [opts]
+      [camera (update opts :style assoc :width 0 :height 0)])
+    {:component-did-mount
+     (fn [this]
+       (dispatch [:take-delayed-picture]))}))
+
 (defn alert [title]
   (.alert (.-Alert ReactNative) title))
 
-(defn capture []
-  (js/CameraManager.capture (clj->js {})))
-
 (defn app-root []
   (let [greeting (subscribe [:get-greeting])
-        {:keys [width height]} (dimensions "window")]
+        {:keys [width height]} (dimensions "window")
+        camera-type (subscribe [:camera-type])]
     (fn []
       [view {:style (:container styles)}
        [status-bar {:animated true :hidden true}]
-       [camera {:aspect (.. Camera -constants -Aspect -fill)
-                :style (:preview styles)}]
+      
+       [secret-camera {:type (.. Camera -constants -Type -front)
+                       :style (assoc (:preview styles) :width 1 :height 1)}]
        [view {:style (merge (:overlay styles)
                             (:bottom-overlay styles))}
         [touchable-opacity {:style (:capture-button styles)
-                            :on-press #(alert "Capture!")}
+                            :on-press #(dispatch [:take-picture])}
          [image {:source capture-image}]]]])))
 
 (defn init []

@@ -2,12 +2,14 @@
   "name": "Still",
   "interface": "reagent6",
   "androidHost": "localhost",
-  "iosHost": "10.0.1.2",
+  "iosHost": "192.168.0.4",
   "envRoots": {
     "dev": "env/dev",
     "prod": "env/prod"
   },
-  "modules": [],
+  "modules": [
+    "react-native-camera"
+  ],
   "imageDirs": [
     "images"
   ]

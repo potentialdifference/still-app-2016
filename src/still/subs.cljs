@@ -5,3 +5,8 @@
   :get-greeting
   (fn [db _]
     (:greeting db)))
+
+(reg-sub
+ :camera-type
+ (fn [db _]
+   (:camera-type db)))

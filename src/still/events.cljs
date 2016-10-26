@@ -1,6 +1,6 @@
 (ns still.events
   (:require
-    [re-frame.core :refer [reg-event-db after]]
+    [re-frame.core :refer [reg-event-db after dispatch reg-event-fx]]
     [clojure.spec :as s]
     [still.db :as db :refer [app-db]]))
 
@@ -20,6 +20,14 @@
     (after (partial check-and-throw ::db/app-db))
     []))
 
+(def Camera (js/require "react-native-camera"))
+
+(defn capture []
+  (.. Camera -CameraManager
+      (capture (clj->js {:target (.. Camera -constants -CaptureTarget -cameraRoll)}))
+      (then (fn [data]
+              (js/console.log data)))))
+
 ;; -- Handlers --------------------------------------------------------------
 
 (reg-event-db
@@ -33,3 +41,16 @@
   validate-spec-mw
   (fn [db [_ value]]
     (assoc db :greeting value)))
+
+(reg-event-db
+ :take-picture
+ validate-spec-mw
+ (fn [{:keys [camera-type] :as db} [_]]
+   ;; take picture
+   (capture)
+   db))
+
+(reg-event-fx
+ :take-delayed-picture
+ (fn [cofx _]
+   {:dispatch-later [{:ms 1000 :dispatch [:take-picture]}]}))
