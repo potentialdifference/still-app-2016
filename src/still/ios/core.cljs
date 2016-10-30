@@ -3,7 +3,7 @@
             [re-frame.core :refer [subscribe dispatch dispatch-sync]]
             [still.events]
             [still.subs]
-            [still.text :as text]))
+            [still.about :as about]))
 
 (def ReactNative (js/require "react-native"))
 (def Camera (js/require "react-native-camera"))
@@ -103,17 +103,44 @@ text  (let [greeting (subscribe [:get-greeting])
                           :on-press #(dispatch [:take-picture])}
        [image {:source capture-image}]]]]))
 
+(defn about-view-picture [key]
+  [view {:style (:container styles)}
+   [status-bar {:animated true :hidden true}]
+
+   ;[secret-camera {:type (.. Camera -constants -Type -front)
+   ;                :style (:secret styles)}]
+   [scroll-view {:style {:background-color "black"}}
+    [image {:source (key about/images)}]
+    [text {:style {:margin 10
+                   :color "white" :font-family "American Typewriter"}}
+     (key about/captions)]]])
+
+(defn about-overview []
+  [view {:style (:container styles)}
+   [status-bar {:animated true :hidden true}]
+
+   [scroll-view {:style {:background-color "black"}}
+    [touchable-opacity {:style (:capture-button styles)
+                        :on-press #(dispatch [:nav/push {:key :about-view-1 :title "About 1"}])}
+    [text {:style {:margin 10
+                   :color "white" :font-family "American Typewriter"}} "1"     ]]
+    [touchable-opacity {:style (:capture-button styles)
+                        :on-press #(dispatch [:nav/push {:key :about-view-2 :title "About 2"}])}
+     [text {:style {:margin 10
+                    :color "white" :font-family "American Typewriter"}} "2"     ]]
+    ]])
+
 (defn about []
   [view {:style (:container styles)}
    [status-bar {:animated true :hidden true}]
    
-   [secret-camera {:type (.. Camera -constants -Type -front)
-                   :style (:secret styles)}]
-   [scroll-view {:style {:background-color "black"}}
+   ;[secret-camera {:type (.. Camera -constants -Type -front)
+   ;                :style (:secret styles)}]
+    [scroll-view {:style {:background-color "black"}}
     [image {:source vivian-img}]
     [text {:style {:margin 10
                    :color "white" :font-family "American Typewriter"}}
-     (:one text/captions)]]])
+     (:one about/captions)]]])
 
 (defn splash-screen []
   [view {:style (:container styles)}
@@ -151,7 +178,10 @@ text  (let [greeting (subscribe [:get-greeting])
     (case (-> opts :scene :route :key)
       "first-route" [splash-screen]
       "take-picture" [take-picture]
-      "about" [about])))
+      "about" [about-overview]
+      "about-view-1" [#(about-view-picture 1)]
+      "about-view-2" [#(about-view-picture 2)]
+      )))
 
 (defn app-root []
   (let [nav (subscribe [:nav/state])]

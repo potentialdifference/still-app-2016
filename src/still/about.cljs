@@ -1,4 +1,4 @@
-(ns still.text)
+(ns still.about)
 (def captions {:one "Vivian Maier was born, in poverty, in 1926, in the Bronx, New York City, and at age 6, her mother, now separated from Vivian's father, took her to the Alpine village of Saint-Bonnet-en-Champsaur in South East France, birthplace of her mother. Vivian was schooled in France from age 6 to 12 when she returned with her mother to New York. \n"
                :two "We know Vivian worked in factories and sweatshops, but it wasn't until her mid-twenties that her photographic life started to take off: buying herself an iconic Rolleiflex camera she started photographing the buildings and people of the Big Apple. \n"
                :three "In 1956, for unknown reasons, Vivian moved to Chicago in 1956, devoting her life to nannying, while using every moment of her spare time to photograph everything from the children she looked after, to street scenes around Chicago.\n"
@@ -8,3 +8,11 @@
                }
 
   )
+(def images {:one ((js/require "./images/vivian1.png"))
+             :two((js/require "./images/vivian2.png"))
+             :three ((js/require "./images/vivian3.png"))
+             :four ((js/require "./images/vivian4.png"))
+             :five ((js/require "./images/vivian5.png"))
+             :six ((js/require "./images/vivian6.png"))
+
+             })
