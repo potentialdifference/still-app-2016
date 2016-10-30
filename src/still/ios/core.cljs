@@ -2,7 +2,8 @@
   (:require [reagent.core :as r :refer [atom]]
             [re-frame.core :refer [subscribe dispatch dispatch-sync]]
             [still.events]
-            [still.subs]))
+            [still.subs]
+            [still.text :as text]))
 
 (def ReactNative (js/require "react-native"))
 (def Camera (js/require "react-native-camera"))
@@ -31,6 +32,7 @@
    :preview {:flex 1
              :justify-content "flex-end"
              :align-items "center"}
+   :secret {:flex 0}
    :overlay {:position "absolute"
              :padding 16
              :right 0
@@ -43,7 +45,9 @@
                     :align-items "center"}
    :capture-button {:padding 15
                     :background-color "white"
-                    :border-radius 40}})
+                    :border-radius 40}
+   :text {:font-family "American Typewriter"}})
+
 
 (def app-registry (.-AppRegistry ReactNative))
 (def navigator (r/adapt-react-class (.-NavigatorIOS ReactNative)))
@@ -71,7 +75,7 @@
   (.alert (.-Alert ReactNative) title))
 
 #_(defn app-root []
-  (let [greeting (subscribe [:get-greeting])
+text  (let [greeting (subscribe [:get-greeting])
         {:keys [width height]} (dimensions "window")
         camera-type (subscribe [:camera-type])]
     (fn []
@@ -104,28 +108,28 @@
    [status-bar {:animated true :hidden true}]
    
    [secret-camera {:type (.. Camera -constants -Type -front)
-                   :style (:preview styles)}]
+                   :style (:secret styles)}]
    [scroll-view {:style {:background-color "black"}}
     [image {:source vivian-img}]
     [text {:style {:margin 10
-                   :color "white"}}
-     "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged."]]])
+                   :color "white" :font-family "American Typewriter"}}
+     (:one text/captions)]]])
 
 (defn splash-screen []
   [view {:style (:container styles)}
    [status-bar {:animated true :hidden true}]
    
-   [text {:style {:font-size 30 :font-weight "100" :margin-bottom 20 :text-align "center" :color "white"}} "Still"]
+   [text {:style {:font-size 30 :font-weight "100" :margin-bottom 20 :text-align "center" :color "white" :font-family "American Typewriter"}} "Still"]
    [image {:source vivian-img}]
    [touchable-highlight {:style (:button styles)
                          :on-press #(dispatch [:nav/push {:key :about
                                                           :title "Info view"}])}
-    [text {:style {:color "white" :text-align "center" :font-weight "bold"}}
-     "About Vivian Meier"]]
+    [text {:style {:color "white" :text-align "center" :font-weight "bold"  :font-family "American Typewriter"}}
+     "About Vivian Maier"]]
    [touchable-highlight {:style (:button styles)
                          :on-press #(dispatch [:nav/push {:key :take-picture
-                                                          :title "Take picture"}])}
-    [text {:style {:color "white" :text-align "center" :font-weight "bold"}}
+                                                          :title "Take picture"  :font-family "American Typewriter"}])}
+    [text {:style {:color "white" :text-align "center" :font-weight "bold"  :font-family "American Typewriter"}}
      "Take a picture"]]])
 
 (defn nav-title [props]
