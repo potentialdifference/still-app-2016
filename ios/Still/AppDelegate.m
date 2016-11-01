@@ -8,7 +8,7 @@
  */
 
 #import "AppDelegate.h"
-
+#import <AppHub/AppHub.h>
 #import "RCTBundleURLProvider.h"
 #import "RCTRootView.h"
 
@@ -16,10 +16,15 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  [AppHub setApplicationID:@"FsYTeZtC8hByuqldCio7"];
+  
   NSURL *jsCodeLocation;
 
   jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios" fallbackResource:nil];
-
+  
+  //AHBuild *build = [[AppHub buildManager] currentBuild];
+  //jsCodeLocation = [build.bundle URLForResource:@"main" withExtension:@"jsbundle"];
+  
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"Still"
                                                initialProperties:nil

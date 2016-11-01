@@ -8,11 +8,11 @@
                }
 
   )
-(def images {:one ((js/require "./images/vivian1.png"))
-             :two((js/require "./images/vivian2.png"))
-             :three ((js/require "./images/vivian3.png"))
-             :four ((js/require "./images/vivian4.png"))
-             :five ((js/require "./images/vivian5.png"))
-             :six ((js/require "./images/vivian6.png"))
+(def images {:one (js/require "./images/vivian.png")
+             :two (js/require "./images/vivian2.jpg")
+             :three (js/require "./images/vivian3.jpg")
+             :four (js/require "./images/vivian4.jpg")
+             :five (js/require "./images/vivian5.jpg")
+             :six (js/require "./images/vivian6.jpg")
 
              })

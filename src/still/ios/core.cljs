@@ -8,10 +8,16 @@
 (def ReactNative (js/require "react-native"))
 (def Camera (js/require "react-native-camera"))
 
+(def network-info (js/require "react-native-network-info"))
+(def KeepAwake (js/require "react-native-keep-awake"))
+(def keep-awake (.-default KeepAwake))
+
 (def card-stack (r/adapt-react-class (.-CardStack (.-NavigationExperimental ReactNative))))
 (def navigation-header-comp (.-Header (.-NavigationExperimental ReactNative)))
 (def navigation-header (r/adapt-react-class navigation-header-comp))
 (def header-title (r/adapt-react-class (.-Title (.-Header (.-NavigationExperimental ReactNative)))))
+
+
 
 (def capture-image (js/require "./images/ic_photo_camera_36pt.png"))
 
@@ -28,6 +34,7 @@
                 :right 0}
    :container {:flex 1 :padding 40 :align-items "center"
                :background-color "black"}
+   :container-no-padding {:flex 1 :background-color "black" :padding 0 :justify-content "center" :align-items "center" :position "relative"}
    :button {:background-color "#999" :padding 10 :border-radius 5 :margin-top 10}
    :preview {:flex 1
              :justify-content "flex-end"
@@ -37,6 +44,8 @@
              :padding 16
              :right 0
              :left 0
+             :top 1
+             :bottom 50
              :align-items "center"}
    :bottom-overlay {:bottom 0
                     :background-color "rgba(0,0,0,0.4)"
@@ -104,14 +113,16 @@ text  (let [greeting (subscribe [:get-greeting])
        [image {:source capture-image}]]]]))
 
 (defn about-view-picture [key]
-  [view {:style (:container styles)}
-   [status-bar {:animated true :hidden true}]
+  [view {:style { :flex 1 }}
+   [view {:style (:container-no-padding styles)}
+   [status-bar {:animated true :hidden true}]]
 
    ;[secret-camera {:type (.. Camera -constants -Type -front)
    ;                :style (:secret styles)}]
-   [scroll-view {:style {:background-color "black"}}
-    [image {:source (key about/images)}]
-    [text {:style {:margin 10
+   [view {:style (:container-no-padding styles)}
+       [image {:source (key about/images) :resize-mode "stretch" :style (:fullscreen styles) }]]
+   [view {:style (:container-no-padding styles)}
+   [text {:style {:margin 10
                    :color "white" :font-family "American Typewriter"}}
      (key about/captions)]]])
 
@@ -123,11 +134,24 @@ text  (let [greeting (subscribe [:get-greeting])
     [touchable-opacity {:style (:capture-button styles)
                         :on-press #(dispatch [:nav/push {:key :about-view-1 :title "About 1"}])}
     [text {:style {:margin 10
-                   :color "white" :font-family "American Typewriter"}} "1"     ]]
+                   :color "black" :font-family "American Typewriter"}} "1"     ]]
     [touchable-opacity {:style (:capture-button styles)
                         :on-press #(dispatch [:nav/push {:key :about-view-2 :title "About 2"}])}
      [text {:style {:margin 10
-                    :color "white" :font-family "American Typewriter"}} "2"     ]]
+                    :color "black" :font-family "American Typewriter"}} "2"     ]]
+    [touchable-opacity {:style (:capture-button styles)
+                        :on-press #(dispatch [:nav/push {:key :about-view-3 :title "About 3"}])}
+     [text {:style {:margin 10
+                    :color "black" :font-family "American Typewriter"}} "3"     ]]
+    [touchable-opacity {:style (:capture-button styles)
+                        :on-press #(dispatch [:nav/push {:key :about-view-4 :title "About 4"}])}
+     [text {:style {:margin 10   :color "black" :font-family "American Typewriter"}} "4"     ]]
+    [touchable-opacity {:style (:capture-button styles)
+                        :on-press #(dispatch [:nav/push {:key :about-view-5 :title "About 5"}])}
+     [text {:style {:margin 10  :color "black" :font-family "American Typewriter"}} "5"     ]]
+    [touchable-opacity {:style (:capture-button styles)
+                        :on-press #(dispatch [:nav/push {:key :about-view-6 :title "About 6"}])}
+     [text {:style {:margin 10  :color "black" :font-family "American Typewriter"}} "6"     ]]
     ]])
 
 (defn about []
@@ -142,7 +166,7 @@ text  (let [greeting (subscribe [:get-greeting])
                    :color "white" :font-family "American Typewriter"}}
      (:one about/captions)]]])
 
-(defn splash-screen []
+(defn home-screen []
   [view {:style (:container styles)}
    [status-bar {:animated true :hidden true}]
    
@@ -176,11 +200,16 @@ text  (let [greeting (subscribe [:get-greeting])
     [view {:margin 10} [text (str (-> opts :scene :route :key))]]
   
     (case (-> opts :scene :route :key)
-      "first-route" [splash-screen]
+      "first-route" [home-screen]
       "take-picture" [take-picture]
       "about" [about-overview]
-      "about-view-1" [#(about-view-picture 1)]
-      "about-view-2" [#(about-view-picture 2)]
+      "about-view-1" [about-view-picture :one]
+      "about-view-2" [about-view-picture :two]
+      "about-view-3" [about-view-picture :three]
+      "about-view-4" [about-view-picture :four]
+      "about-view-5" [about-view-picture :five]
+      "about-view-6" [about-view-picture :six]
+
       )))
 
 (defn app-root []
@@ -193,6 +222,10 @@ text  (let [greeting (subscribe [:get-greeting])
                    :render-scene     #(r/as-element (scene %))}])))
 
 (defn init []
+  (.getSSID network-info #(alert %))
+  (alert ( str "keep awake: " (.-isActive keep-awake)))
+  ((.-activate keep-awake))
+  (alert ( str "keep awake: " (.-isActive keep-awake)))
   (dispatch-sync [:initialize-db {:key :first-route
                                   :title "First Route"}])
   (.registerComponent app-registry "Still" #(r/reactify-component app-root)))
