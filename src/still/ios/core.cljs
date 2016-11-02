@@ -34,7 +34,7 @@
    :container-no-padding {:flex 1 :background-color "black" :padding 0 :justify-content "space-around"}
    :about-container      {:flex 1 :justify-content "center" :background-color "black"}
    :about-row            {:flex 1 :flex-direction "row" :justify-content "center" :align-items "center"}
-   :button               {:background-color "#999" :padding 10 :border-radius 5 :margin-top 10}
+   :button               {:background-color "white" :margin 10 :padding 10 :border-radius 5 :margin-top 10}
    :preview              {:position "absolute"
                           :top      0
                           :left     0
@@ -182,20 +182,20 @@
    [image {:source vivian-img}]
    [touchable-highlight {:style (:button styles)
                          :on-press #(dispatch [:nav/push {:key :about
-                                                          :title "Info view"}])}
-    [text {:style {:color "white" :text-align "center" :font-weight "bold"  :font-family "American Typewriter"}}
+                                                          :title "About Vivian Maier"}])}
+    [text {:style {:color "black" :border-color "white" :background-color "white" :text-align "center" :font-weight "bold"  :font-family "American Typewriter"}}
      "About Vivian Maier"]]
    [touchable-highlight {:style (:button styles)
                          :on-press #(dispatch [:nav/push {:key :take-picture
                                                           :title "Take picture"  :font-family "American Typewriter"}])}
-    [text {:style {:color "white" :text-align "center" :font-weight "bold"  :font-family "American Typewriter"}}
+    [text {:style {:color "black" :border-color "white" :background-color "white" :text-align "center" :font-weight "bold"  :font-family "American Typewriter"}}
      "Take a picture"]]
-   [view {:style {:flex 1 :justify-content "flex-end" :flex-direction "column"}} [text {:style {:color "white" :text-align "center" :font-weight "bold" :flex 1 :font-family "American Typewriter"}}
+   [view {:style {:flex 1 :justify-content "flex-end" :flex-direction "column"}} [text {:style {:color "white" :font-size 10 :text-align "center" :flex 1 :font-family "American Typewriter"}}
                                                                                   "Images ©Vivian Maier/Maloof Collection, Courtesy Howard Greenberg Gallery, New York"]] ])
 
 (defn nav-title [props]
   (.log js/console "props" props)
-  [header-title (aget props "scene" "route" "title")])
+  [header-title {:style {:color "white"}} (aget props "scene" "route" "title")])
 
 (defn header
   [props]
@@ -203,7 +203,10 @@
    (assoc
      (js->clj props)
      :render-title-component #(r/as-element (nav-title %))
-     :on-navigate-back #(dispatch [:nav/pop nil]))])
+     :on-navigate-back #(dispatch [:nav/pop nil])
+     :style {:background-color "white" :height 40 :margin 0 :border-bottom-color "white"
+             }
+     )])
 
 (defn scene [props]
   (let [opts (js->clj props :keywordize-keys true)]
