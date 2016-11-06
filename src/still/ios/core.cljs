@@ -213,7 +213,9 @@
      :style {:background-color "white" :border-bottom-color "white"})])
 
 (defn show-mode []
-  [view {:style (:about-container styles)}])
+  [view {:style (:about-container styles)}
+   [image {:source {:uri "http://10.0.1.2:8080/public/test1.jpg"}
+           :style {:width 400 :height 400}}]])
 
 (defn scene [props]
   (let [opts (js->clj props :keywordize-keys true)]
