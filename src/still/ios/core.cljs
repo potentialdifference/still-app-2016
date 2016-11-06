@@ -195,7 +195,8 @@
 
 (defn nav-title [props]
   (.log js/console "props" props)
-  [header-title {:style {:color "white"}} (aget props "scene" "route" "title")])
+  [header-title
+   (aget props "scene" "route" "title")])
 
 (defn header
   [props]
@@ -204,9 +205,7 @@
      (js->clj props)
      :render-title-component #(r/as-element (nav-title %))
      :on-navigate-back #(dispatch [:nav/pop nil])
-     :style {:background-color "white" :height 40 :margin 0 :border-bottom-color "white"
-             }
-     )])
+     :style {:background-color "white" :border-bottom-color "white"})])
 
 (defn scene [props]
   (let [opts (js->clj props :keywordize-keys true)]
