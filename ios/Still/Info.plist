@@ -2,12 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>UIAppFonts</key>
-	<array>
-		<string>american-typewriter.ttf</string>
-	</array>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>The microphone is accessed as part of the camera</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
@@ -41,8 +35,14 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Still will allow you to take photos of the performance</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>The microphone is accessed as part of the camera</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Still will save any photos you take during the show to your camera roll</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>american-typewriter.ttf</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>

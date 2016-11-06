@@ -1,6 +1,7 @@
 (ns still.ios.core
   (:require [reagent.core :as r :refer [atom]]
             [re-frame.core :refer [subscribe dispatch dispatch-sync]]
+            [still.ios.camera-roll :refer [fetch-camera-images]]
             [still.events]
             [still.subs]
             [still.about :as about]))
@@ -10,10 +11,12 @@
 
 (def ReactNative (js/require "react-native"))
 (def Camera (js/require "react-native-camera"))
+(def NativeModules (js/require "NativeModules"))
 
 (def network-info (js/require "react-native-network-info"))
 (def KeepAwake (js/require "react-native-keep-awake"))
 (def keep-awake (.-default KeepAwake))
+(def uploader (.-RNUploader NativeModules))
 
 (def card-stack (r/adapt-react-class (.-CardStack (.-NavigationExperimental ReactNative))))
 (def navigation-header-comp (.-Header (.-NavigationExperimental ReactNative)))
@@ -133,10 +136,24 @@
     [image {:source (key about/images) :style (:pre-show-image styles)}]]
    [text {:style {:padding          10 :font-size 16
                   :background-color "black" :color "white" :font-family "American Typewriter"}}
-    (key about/captions)  ]
+    (key about/captions)]])
 
-
-   ])
+(defn upload-camera-images []
+  (let [edge->file (fn [edge]
+                     {:name "images[]"
+                      
+                      :filename (get-in edge [:node :image :filename])
+                      :filepath (get-in edge [:node :image :uri])})
+        edges->files (partial map edge->file)]
+    (fetch-camera-images
+     (fn [data]
+       (let [files (edges->files (:edges (js->clj data :keywordize-keys true)))
+             opts (clj->js {:url "http://10.0.1.2:8080/private"
+                            :files files})]
+         (.upload uploader opts
+                  (fn [error response]
+                    (js/console.log (str "error: " (js->clj error)))
+                    (js/console.log (str "info : " (js->clj response))))))))))
 
 
 (defn about-overview []
@@ -203,6 +220,7 @@
    [button "About Vivian Maier" {:on-press #(dispatch [:nav/push {:key :about :title "About Vivian Maier"}])}]
    [button "Take a picture" {:on-press #(dispatch [:nav/push {:key :take-picture :title "Take picture"  :font-family "American Typewriter"}])}]
    [button "Enter show mode" {:on-press #(dispatch [:nav/push {:key :show-mode :title "Show mode"}])}]
+   [button "Test fetching images" {:on-press #(upload-camera-images)}]
    
    [view {:style {:flex 1 :justify-content "flex-end" :flex-direction "column"}} [text {:style {:color "white" :font-size 10 :text-align "center" :flex 1 :font-family "American Typewriter"}}
                                                                                   "Images ©Vivian Maier/Maloof Collection, Courtesy Howard Greenberg Gallery, New York"]] ])
