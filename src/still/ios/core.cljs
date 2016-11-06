@@ -5,6 +5,9 @@
             [still.subs]
             [still.about :as about]))
 
+(def lorem
+  "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.")
+
 (def ReactNative (js/require "react-native"))
 (def Camera (js/require "react-native-camera"))
 
@@ -40,16 +43,16 @@
                           :left     0
                           :bottom   0
                           :right    0
-                          ;:flex 1
-                          ;:justify-content "flex-end"
-                          ;:align-items "center"
+                                        ;:flex 1
+                                        ;:justify-content "flex-end"
+                                        ;:align-items "center"
                           }
    :secret               {:flex 0}
    :overlay              {:position    "absolute"
                           :padding     16
                           :right       0
                           :left        0
-                          ;:top         1
+                                        ;:top         1
                           :bottom      30
                           :align-items "center"
                           }
@@ -70,7 +73,13 @@
    :pre-show-button-text {
                           :color "black" :font-size 20 :font-family "American Typewriter"}
    :pre-show-image       {:resizeMode "contain" :flex 1 :width nil :height nil}
-   :text                 {:font-family "American Typewriter"}})
+   :text                 {:font-family "American Typewriter"}
+   :show-mode-text       {:font-size 24
+                          :line-height 40
+                          :text-align "justify"
+                          :background-color "black"
+                          :color "white"
+                          :font-family "American Typewriter"}})
 
 
 (def app-registry (.-AppRegistry ReactNative))
@@ -213,9 +222,10 @@
      :style {:background-color "white" :border-bottom-color "white"})])
 
 (defn show-mode []
-  [view {:style (:about-container styles)}
-   [image {:source {:uri "http://10.0.1.2:8080/public/test1.jpg"}
-           :style {:width 400 :height 400}}]])
+  [view {:style (:container styles)}
+   #_[image {:source {:uri "http://10.0.1.2:8080/public/test1.jpg"}
+             :style {:width 400 :height 400}}]
+   [text {:style (:show-mode-text styles)} lorem]])
 
 (defn scene [props]
   (let [opts (js->clj props :keywordize-keys true)]
