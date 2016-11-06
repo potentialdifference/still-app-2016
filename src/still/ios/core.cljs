@@ -174,22 +174,27 @@
                    :color "white" :font-family "American Typewriter"}}
      (:one about/captions)]]])
 
+(defn button [label {:keys [on-press]}]
+  [touchable-highlight {:style (:button styles)
+                        :on-press on-press}
+   [text {:style {:color "black"
+                  :border-color "white"
+                  :background-color "white"
+                  :text-align "center"
+                  :font-weight "bold"
+                  :font-family "American Typewriter"}}
+    label]])
+
 (defn home-screen []
   [view {:style (:container styles)}
    [status-bar {:animated true :hidden true}]
 
    [text {:style {:font-size 30 :font-weight "100" :margin-bottom 20 :text-align "center" :color "white" :font-family "American Typewriter"}} "Still"]
    [image {:source vivian-img}]
-   [touchable-highlight {:style (:button styles)
-                         :on-press #(dispatch [:nav/push {:key :about
-                                                          :title "About Vivian Maier"}])}
-    [text {:style {:color "black" :border-color "white" :background-color "white" :text-align "center" :font-weight "bold"  :font-family "American Typewriter"}}
-     "About Vivian Maier"]]
-   [touchable-highlight {:style (:button styles)
-                         :on-press #(dispatch [:nav/push {:key :take-picture
-                                                          :title "Take picture"  :font-family "American Typewriter"}])}
-    [text {:style {:color "black" :border-color "white" :background-color "white" :text-align "center" :font-weight "bold"  :font-family "American Typewriter"}}
-     "Take a picture"]]
+   [button "About Vivian Maier" {:on-press #(dispatch [:nav/push {:key :about :title "About Vivian Maier"}])}]
+   [button "Take a picture" {:on-press #(dispatch [:nav/push {:key :take-picture :title "Take picture"  :font-family "American Typewriter"}])}]
+   [button "Enter show mode" {:on-press #(dispatch [:nav/push {:key :show-mode :title "Show mode"}])}]
+   
    [view {:style {:flex 1 :justify-content "flex-end" :flex-direction "column"}} [text {:style {:color "white" :font-size 10 :text-align "center" :flex 1 :font-family "American Typewriter"}}
                                                                                   "Images ©Vivian Maier/Maloof Collection, Courtesy Howard Greenberg Gallery, New York"]] ])
 
@@ -207,6 +212,9 @@
      :on-navigate-back #(dispatch [:nav/pop nil])
      :style {:background-color "white" :border-bottom-color "white"})])
 
+(defn show-mode []
+  [view {:style (:about-container styles)}])
+
 (defn scene [props]
   (let [opts (js->clj props :keywordize-keys true)]
     [view {:margin 10} [text (str (-> opts :scene :route :key))]]
@@ -214,15 +222,14 @@
     (case (-> opts :scene :route :key)
       "first-route" [home-screen]
       "take-picture" [take-picture]
+      "show-mode" [show-mode]
       "about" [about-overview]
       "about-view-1" [about-view-picture :one]
       "about-view-2" [about-view-picture :two]
       "about-view-3" [about-view-picture :three]
       "about-view-4" [about-view-picture :four]
       "about-view-5" [about-view-picture :five]
-      "about-view-6" [about-view-picture :six]
-
-      )))
+      "about-view-6" [about-view-picture :six])))
 
 (defn app-root []
   (let [nav (subscribe [:nav/state])]
