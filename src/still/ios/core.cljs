@@ -75,7 +75,9 @@
    :pre-show-button-text {
                           :color "black" :font-size 20 :font-family "American Typewriter"}
    :pre-show-image       {:resizeMode "contain" :flex 1 :width nil :height nil}
-   :text                 {:font-family "American Typewriter"}
+   :text                 {:font-family "American Typewriter"
+                          :color "white"
+                          :text-align "center"}
    :show-mode-text       {:font-size 24
                           :line-height 40
                           :text-align "justify"
@@ -192,26 +194,36 @@
                   :font-family "American Typewriter"}}
     label]])
 
+(defn privacy-policy-view []
+  [view
+   [text {:style (:text styles)}
+    "To proceed you must agree to our privacy policy."]
+   [button "I agree" {:on-press #(dispatch [:set-privacy-policy-agreed true])}]])
+
+(defn home-view []
+  [view
+   [text {:style {:font-size 30 :font-weight "100" :margin-bottom 20 :text-align "center" :color "white" :font-family "American Typewriter"}} "Still"]
+   [image {:source vivian-img}]
+   [button "About Vivian Maier" {:on-press #(dispatch [:nav/push {:key :about :title "About Vivian Maier"}])}]
+   [button "Take a picture" {:on-press #(dispatch [:nav/push {:key :take-picture :title "Take picture"  :font-family "American Typewriter"}])}]
+   [button "Enter show mode" {:on-press #(dispatch [:nav/push {:key :show-mode :title "Show mode"}])}]
+   [button "Test fetching images" {:on-press #(dispatch [:upload-album! (constantly true)])}]
+   [view {:style {:flex 1 :justify-content "flex-end" :flex-direction "column"}} [text {:style {:color "white" :font-size 10 :text-align "center" :flex 1 :font-family "American Typewriter"}}
+                                                                                  "Images ©Vivian Maier/Maloof Collection, Courtesy Howard Greenberg Gallery, New York"]]])
+
 (defn home-screen []
-  (let [ssid (subscribe [:ssid])]
+  (let [agreed? (subscribe [:privacy-policy-agreed?])]
     (fn []
       [view {:style (:container styles)}
        [status-bar {:animated true :hidden true}]
-
-       [text {:style {:font-size 30 :font-weight "100" :margin-bottom 20 :text-align "center" :color "white" :font-family "American Typewriter"}} @ssid]
-       [image {:source vivian-img}]
-       [button "About Vivian Maier" {:on-press #(dispatch [:nav/push {:key :about :title "About Vivian Maier"}])}]
-       [button "Take a picture" {:on-press #(dispatch [:nav/push {:key :take-picture :title "Take picture"  :font-family "American Typewriter"}])}]
-       [button "Enter show mode" {:on-press #(dispatch [:nav/push {:key :show-mode :title "Show mode"}])}]
-       [button "Test fetching images" {:on-press #(dispatch [:upload-album! (constantly true)])}]
-       
-       [view {:style {:flex 1 :justify-content "flex-end" :flex-direction "column"}} [text {:style {:color "white" :font-size 10 :text-align "center" :flex 1 :font-family "American Typewriter"}}
-                                                                                      "Images ©Vivian Maier/Maloof Collection, Courtesy Howard Greenberg Gallery, New York"]] ])))
+       (if @agreed?
+         [home-view]
+         [privacy-policy-view])])))
 
 (defn nav-title [props]
-  (.log js/console "props" props)
-  [header-title
-   (aget props "scene" "route" "title")])
+    (.log js/console "props" props)
+    [header-title
+     (aget props "scene" "route" "title")])
 
 (defn header
   [props]

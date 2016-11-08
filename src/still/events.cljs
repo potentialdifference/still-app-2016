@@ -80,7 +80,8 @@
  (fn [cofx [_ ssid]]
    (cond-> {:db (assoc (:db cofx) :ssid ssid)}
      (and (contains? (:valid-ssids config) ssid)
-          (not (-> cofx :db :album-uploaded?)))
+          (not (-> cofx :db :album-uploaded?))
+          (-> cofx :db :privacy-policy-agreed?))
      (assoc :upload-album! #(dispatch [:set-album-uploaded true])))))
 
 (reg-event-fx
@@ -99,3 +100,9 @@
  (fn [cofx _]
    {:dispatch-later [{:ms 30000 :dispatch [:fetch-ssid-periodically]}]
     :get-ssid #(dispatch [:set-ssid %])}))
+
+(reg-event-db
+ :set-privacy-policy-agreed
+ validate-spec-mw
+ (fn [db [_ bool]]
+   (assoc db :privacy-policy-agreed? bool)))

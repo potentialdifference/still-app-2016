@@ -17,11 +17,6 @@
    (:nav db)))
 
 (reg-sub
-  :get-greeting
-  (fn [db _]
-    (:greeting db)))
-
-(reg-sub
- :camera-type
+ :privacy-policy-agreed?
  (fn [db _]
-   (:camera-type db)))
+   (:privacy-policy-agreed? db)))
