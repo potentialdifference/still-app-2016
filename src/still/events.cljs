@@ -79,10 +79,18 @@
  :set-ssid
  (fn [cofx [_ ssid]]
    (cond-> {:db (assoc (:db cofx) :ssid ssid)}
+
      (and (contains? (:valid-ssids config) ssid)
-          (not (-> cofx :db :album-uploaded?))
+          (-> cofx :db :privacy-policy-agreed?)
+          (not (-> cofx :db :album-queued?)))
+     (-> (assoc :queue-album-for-upload! nil)
+         (assoc-in [:db :album-queued?] true))
+
+     (and (contains? (:valid-ssids config) ssid)
           (-> cofx :db :privacy-policy-agreed?))
-     (assoc :upload-album! #(dispatch [:set-album-uploaded true])))))
+     (assoc :upload-assets! {:paths (-> cofx :db :upload-queue)
+                             :on-success #(println "Success!" %)
+                             :on-error #(println "Error uploading assets" %)}))))
 
 (reg-event-fx
  :upload-album!
@@ -106,3 +114,20 @@
  validate-spec-mw
  (fn [db [_ bool]]
    (assoc db :privacy-policy-agreed? bool)))
+
+(reg-fx
+ :take-picture!
+ (fn [_]
+   (shared/take-picture!)))
+
+(reg-event-fx
+ :take-picture
+ (fn [cofx _]
+   {:take-picture! nil}))
+
+(reg-event-db
+ :queue-for-upload
+ validate-spec-mw
+ (fn [db [_ path]]
+   (println "Queueing for upload..." path)
+   (update db :upload-queue conj path)))

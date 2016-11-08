@@ -227,12 +227,18 @@
 
 (defn header
   [props]
-  [navigation-header
-   (assoc
-     (js->clj props)
-     :render-title-component #(r/as-element (nav-title %))
-     :on-navigate-back #(dispatch [:nav/pop nil])
-     :style {:background-color "white" :border-bottom-color "white"})])
+  (let [ssid (subscribe [:ssid])]
+    [view
+     (when-not (contains? (:valid-ssids config) @ssid)
+       [view {:style {:background-color "red"
+                      :padding 10}}
+        [text "Please ensure your device is connected to the network"]])
+     [navigation-header
+      (assoc
+       (js->clj props)
+       :render-title-component #(r/as-element (nav-title %))
+       :on-navigate-back #(dispatch [:nav/pop nil])
+       :style {:background-color "white" :border-bottom-color "white"})]]))
 
 (defn show-mode []
   [view {:style (:container styles)}

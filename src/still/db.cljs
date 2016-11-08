@@ -6,8 +6,12 @@
 (s/def ::key keyword?)
 (s/def ::title string?)
 (s/def ::ssid string?)
-(s/def ::album-uploaded? boolean?)
+(s/def ::album-queued? boolean?)
 (s/def ::privacy-policy-agreed? boolean?)
+
+(s/def ::asset-path string?)
+
+(s/def ::upload-queue (s/* ::asset-path))
 
 (s/def ::route (s/keys :req-un [::key
                                 ::title]))
@@ -18,8 +22,9 @@
                               ::routes]))
 
 (s/def ::app-db (s/keys :req-un [::nav ::message ::images ::ssid
-                                 ::album-uploaded?
-                                 ::privacy-policy-agreed?]))
+                                 ::album-queued?
+                                 ::privacy-policy-agreed?
+                                 ::upload-queue]))
 
 ;; initial state of app-db
 (defn app-db
@@ -30,5 +35,6 @@
          :key :home
          :routes [route]}
    :ssid ""
-   :album-uploaded? false
-   :privacy-policy-agreed? false})
+   :album-queued? false
+   :privacy-policy-agreed? false
+   :upload-queue []})
