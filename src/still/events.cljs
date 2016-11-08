@@ -1,6 +1,6 @@
 (ns still.events
   (:require
-    [re-frame.core :refer [reg-event-db after dispatch reg-event-fx]]
+    [re-frame.core :refer [reg-event-db after dispatch reg-event-fx reg-fx]]
     [clojure.spec :as s]
     [still.db :as db :refer [app-db]]
     [still.shared :as shared]))
@@ -42,7 +42,7 @@
  :initial-events
  validate-spec-mw
  (fn [db _]
-   (dispatch [:fetch-ssid])
+   (dispatch [:fetch-ssid-periodically])
    db))
 
 (reg-event-db
@@ -69,14 +69,19 @@
         (assoc-in [:nav :index] 0)
         (assoc-in [:nav :routes] (vector (get-in db [:nav :routes 0]))))))
 
-#_(reg-event-db
- :fetch-ssid
- validate-spec-mw
- (fn [db _]
-   (shared/fetch-ssid #(dispatch [:set-ssid %]))))
+(reg-fx
+ :get-ssid
+ (fn [callback]
+   (shared/fetch-ssid callback)))
 
-#_(reg-event-db
+(reg-event-db
  :set-ssid
  validate-spec-mw
  (fn [db [_ ssid]]
    (assoc db :ssid ssid)))
+
+(reg-event-fx
+ :fetch-ssid-periodically
+ (fn [cofx _]
+   {:dispatch-later [{:ms 30000 :dispatch [:fetch-ssid-periodically]}]
+    :get-ssid #(dispatch [:set-ssid %])}))

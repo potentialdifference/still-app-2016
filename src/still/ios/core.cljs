@@ -277,5 +277,5 @@
 (defn init []
   (dispatch-sync [:initialize-db {:key :first-route
                                   :title "Home"}])
-  ;; (dispatch [:initial-events])
+  (dispatch [:initial-events])
   (.registerComponent app-registry "Still" #(r/reactify-component app-root)))
