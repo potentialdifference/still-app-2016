@@ -24,7 +24,6 @@
 		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		1B5E7A534F5A49EFA0511F5F /* libRCTCamera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD8D1FE69A304A21BD3E5B8A /* libRCTCamera.a */; };
-		1DB041070E0C4894A66D051D /* libRNNetworkInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3272CBDE38184E90928721BF /* libRNNetworkInfo.a */; };
 		46F8CB861DC4058900339A2A /* american-typewriter.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 46F8CB851DC4058900339A2A /* american-typewriter.ttf */; };
 		46F8CBCD1DC8AA6500339A2A /* libAppHub.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46F8CBCA1DC8A98B00339A2A /* libAppHub.a */; };
 		46F8CBD01DC8AA7100339A2A /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46F8CBCF1DC8AA7100339A2A /* SystemConfiguration.framework */; };
@@ -32,6 +31,7 @@
 		4BFA3BCF220743F89EA6A2C1 /* libRNUploader.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 623890C9CBE34BC0A070A22F /* libRNUploader.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		B4DCAE2AC2F94F7E85D50D08 /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C352A104A6B4DA4A80FBE95 /* libRNDeviceInfo.a */; };
+		BA86B5AA1DD1F6C400CBFF34 /* libRNNetworkInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46F8CBF91DC95A1A00339A2A /* libRNNetworkInfo.a */; };
 		BAAB18D21DB66A5600524D51 /* libRCTCamera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BAA4FAE91DB65AAE0028D8DE /* libRCTCamera.a */; };
 		BADEB8721DCF79DE0057A4B9 /* libRCTCameraRoll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BADEB8661DCF79BF0057A4B9 /* libRCTCameraRoll.a */; };
 /* End PBXBuildFile section */
@@ -195,7 +195,6 @@
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
 		1C352A104A6B4DA4A80FBE95 /* libRNDeviceInfo.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNDeviceInfo.a; sourceTree = "<group>"; };
 		28EB93B94A13485895C41649 /* KCKeepAwake.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = KCKeepAwake.xcodeproj; path = "../node_modules/react-native-keep-awake/ios/KCKeepAwake.xcodeproj"; sourceTree = "<group>"; };
-		3272CBDE38184E90928721BF /* libRNNetworkInfo.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNNetworkInfo.a; sourceTree = "<group>"; };
 		46F8CB851DC4058900339A2A /* american-typewriter.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "american-typewriter.ttf"; path = "../american-typewriter.ttf"; sourceTree = "<group>"; };
 		46F8CBC21DC8A98900339A2A /* AppHub.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AppHub.xcodeproj; path = ../node_modules/apphub/AppHub/AppHub.xcodeproj; sourceTree = "<group>"; };
 		46F8CBCF1DC8AA7100339A2A /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -239,8 +238,8 @@
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
+				BA86B5AA1DD1F6C400CBFF34 /* libRNNetworkInfo.a in Frameworks */,
 				1B5E7A534F5A49EFA0511F5F /* libRCTCamera.a in Frameworks */,
-				1DB041070E0C4894A66D051D /* libRNNetworkInfo.a in Frameworks */,
 				0FCD6BA54A15441C9EFA4B47 /* libKCKeepAwake.a in Frameworks */,
 				B4DCAE2AC2F94F7E85D50D08 /* libRNDeviceInfo.a in Frameworks */,
 				4BFA3BCF220743F89EA6A2C1 /* libRNUploader.a in Frameworks */,

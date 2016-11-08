@@ -2,7 +2,8 @@
   (:require
     [re-frame.core :refer [reg-event-db after dispatch reg-event-fx]]
     [clojure.spec :as s]
-    [still.db :as db :refer [app-db]]))
+    [still.db :as db :refer [app-db]]
+    [still.shared :as shared]))
 
 (defn dec-to-zero
   "Same as dec if not zero"
@@ -29,14 +30,6 @@
     (after (partial check-and-throw ::db/app-db))
     []))
 
-(def Camera (js/require "react-native-camera"))
-
-(defn capture []
-  (.. Camera -CameraManager
-      (capture (clj->js {:target (.. Camera -constants -CaptureTarget -cameraRoll)}))
-      (then (fn [data]
-              (js/console.log data)))))
-
 ;; -- Handlers --------------------------------------------------------------
 
 (reg-event-db
@@ -44,6 +37,13 @@
   validate-spec-mw
   (fn [empty-db [_ route]]
     (app-db route)))
+
+(reg-event-db
+ :initial-events
+ validate-spec-mw
+ (fn [db _]
+   (dispatch [:fetch-ssid])
+   db))
 
 (reg-event-db
   :nav/push
@@ -69,21 +69,14 @@
         (assoc-in [:nav :index] 0)
         (assoc-in [:nav :routes] (vector (get-in db [:nav :routes 0]))))))
 
-(reg-event-db
-  :set-greeting
-  validate-spec-mw
-  (fn [db [_ value]]
-    (assoc db :greeting value)))
-
-(reg-event-db
- :take-picture
+#_(reg-event-db
+ :fetch-ssid
  validate-spec-mw
- (fn [{:keys [camera-type] :as db} [_]]
-   ;; take picture
-   (capture)
-   db))
+ (fn [db _]
+   (shared/fetch-ssid #(dispatch [:set-ssid %]))))
 
-(reg-event-fx
- :take-delayed-picture
- (fn [cofx _]
-   {:dispatch-later [{:ms 1000 :dispatch [:take-picture]}]}))
+#_(reg-event-db
+ :set-ssid
+ validate-spec-mw
+ (fn [db [_ ssid]]
+   (assoc db :ssid ssid)))

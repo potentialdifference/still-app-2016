@@ -5,6 +5,7 @@
 (s/def ::index integer?)
 (s/def ::key keyword?)
 (s/def ::title string?)
+(s/def ::ssid string?)
 
 (s/def ::route (s/keys :req-un [::key
                                 ::title]))
@@ -14,7 +15,7 @@
                               ::key
                               ::routes]))
 
-(s/def ::app-db (s/keys :req-un [::nav ::message ::images]))
+(s/def ::app-db (s/keys :req-un [::nav ::message ::images ::ssid]))
 
 ;; initial state of app-db
 (defn app-db
@@ -23,4 +24,5 @@
    :images []
    :nav {:index 0
          :key :home
-         :routes [route]}})
+         :routes [route]}
+   :ssid ""})

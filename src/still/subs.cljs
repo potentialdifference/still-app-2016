@@ -7,6 +7,11 @@
    (get-in db [:nav :index])))
 
 (reg-sub
+ :ssid
+ (fn [db _]
+   (:ssid db)))
+
+(reg-sub
  :nav/state
  (fn [db _]
    (:nav db)))

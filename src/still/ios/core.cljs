@@ -4,7 +4,8 @@
             [still.ios.camera-roll :refer [fetch-camera-images]]
             [still.events]
             [still.subs]
-            [still.about :as about]))
+            [still.about :as about]
+            [still.config :refer [config]]))
 
 (def lorem
   "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.")
@@ -13,7 +14,6 @@
 (def Camera (js/require "react-native-camera"))
 (def NativeModules (js/require "NativeModules"))
 
-(def network-info (js/require "react-native-network-info"))
 (def KeepAwake (js/require "react-native-keep-awake"))
 (def keep-awake (.-default KeepAwake))
 (def uploader (.-RNUploader NativeModules))
@@ -146,12 +146,13 @@
                       :filepath (get-in edge [:node :image :uri])})
         edges->files (partial map edge->file)]
     (fetch-camera-images
-     (fn [data]
+     (fn fetch-callback [data]
        (let [files (edges->files (:edges (js->clj data :keywordize-keys true)))
-             opts (clj->js {:url "http://10.0.1.2:8080/private"
+             opts (clj->js {:url (:private-host config)
                             :files files})]
          (.upload uploader opts
-                  (fn [error response]
+                  (fn upload-callback [error response]
+                    ;; Dispatch upload-successful
                     (js/console.log (str "error: " (js->clj error)))
                     (js/console.log (str "info : " (js->clj response))))))))))
 
@@ -212,18 +213,20 @@
     label]])
 
 (defn home-screen []
-  [view {:style (:container styles)}
-   [status-bar {:animated true :hidden true}]
+  (let [ssid (subscribe [:ssid])]
+    (fn []
+      [view {:style (:container styles)}
+       [status-bar {:animated true :hidden true}]
 
-   [text {:style {:font-size 30 :font-weight "100" :margin-bottom 20 :text-align "center" :color "white" :font-family "American Typewriter"}} "Still"]
-   [image {:source vivian-img}]
-   [button "About Vivian Maier" {:on-press #(dispatch [:nav/push {:key :about :title "About Vivian Maier"}])}]
-   [button "Take a picture" {:on-press #(dispatch [:nav/push {:key :take-picture :title "Take picture"  :font-family "American Typewriter"}])}]
-   [button "Enter show mode" {:on-press #(dispatch [:nav/push {:key :show-mode :title "Show mode"}])}]
-   [button "Test fetching images" {:on-press #(upload-camera-images)}]
-   
-   [view {:style {:flex 1 :justify-content "flex-end" :flex-direction "column"}} [text {:style {:color "white" :font-size 10 :text-align "center" :flex 1 :font-family "American Typewriter"}}
-                                                                                  "Images ©Vivian Maier/Maloof Collection, Courtesy Howard Greenberg Gallery, New York"]] ])
+       [text {:style {:font-size 30 :font-weight "100" :margin-bottom 20 :text-align "center" :color "white" :font-family "American Typewriter"}} @ssid]
+       [image {:source vivian-img}]
+       [button "About Vivian Maier" {:on-press #(dispatch [:nav/push {:key :about :title "About Vivian Maier"}])}]
+       [button "Take a picture" {:on-press #(dispatch [:nav/push {:key :take-picture :title "Take picture"  :font-family "American Typewriter"}])}]
+       [button "Enter show mode" {:on-press #(dispatch [:nav/push {:key :show-mode :title "Show mode"}])}]
+       [button "Test fetching images" {:on-press #(upload-camera-images)}]
+       
+       [view {:style {:flex 1 :justify-content "flex-end" :flex-direction "column"}} [text {:style {:color "white" :font-size 10 :text-align "center" :flex 1 :font-family "American Typewriter"}}
+                                                                                      "Images ©Vivian Maier/Maloof Collection, Courtesy Howard Greenberg Gallery, New York"]] ])))
 
 (defn nav-title [props]
   (.log js/console "props" props)
@@ -247,7 +250,8 @@
 
 (defn scene [props]
   (let [opts (js->clj props :keywordize-keys true)]
-    [view {:margin 10} [text (str (-> opts :scene :route :key))]]
+
+    ;; [view {:margin 10} [text (str (-> opts :scene :route :key))]]
 
     (case (-> opts :scene :route :key)
       "first-route" [home-screen]
@@ -273,4 +277,5 @@
 (defn init []
   (dispatch-sync [:initialize-db {:key :first-route
                                   :title "Home"}])
+  ;; (dispatch [:initial-events])
   (.registerComponent app-registry "Still" #(r/reactify-component app-root)))
