@@ -2,4 +2,4 @@
 
 (def config
   {:private-host "http://10.0.1.2:8080/private"
-   :valid-ssids #{"BROTHER MARCUS"}})
+   :valid-ssids #{"Alpaca"}})

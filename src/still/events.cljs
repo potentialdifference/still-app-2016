@@ -3,7 +3,8 @@
     [re-frame.core :refer [reg-event-db after dispatch reg-event-fx reg-fx]]
     [clojure.spec :as s]
     [still.db :as db :refer [app-db]]
-    [still.shared :as shared]))
+    [still.shared :as shared]
+    [still.config :refer [config]]))
 
 (defn dec-to-zero
   "Same as dec if not zero"
@@ -74,11 +75,24 @@
  (fn [callback]
    (shared/fetch-ssid callback)))
 
-(reg-event-db
+(reg-event-fx
  :set-ssid
+ (fn [cofx [_ ssid]]
+   (cond-> {:db (assoc (:db cofx) :ssid ssid)}
+     (and (contains? (:valid-ssids config) ssid)
+          (not (-> cofx :db :album-uploaded?)))
+     (assoc :upload-album! #(dispatch [:set-album-uploaded true])))))
+
+(reg-event-fx
+ :upload-album!
+ (fn [cofx [_ callback]]
+   {:upload-album! callback}))
+
+(reg-event-db
+ :set-album-uploaded
  validate-spec-mw
- (fn [db [_ ssid]]
-   (assoc db :ssid ssid)))
+ (fn [db [_ bool]]
+   (assoc db :album-uploaded? bool)))
 
 (reg-event-fx
  :fetch-ssid-periodically
