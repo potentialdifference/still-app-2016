@@ -88,6 +88,13 @@
                           :text-align "center"
                           :color "white"
                           :font-family "American Typewriter"}
+   :text-message-box     {:flex 1
+                          :border-radius 10
+                          :padding 20
+                          :position "relative"
+                          :top 200
+                          :width 300
+                          :background-color "green"}
    :show-mode-text       {:font-size 24
                           :line-height 40
                           :text-align "justify"
@@ -100,7 +107,8 @@
 (def status-bar (r/adapt-react-class (.-StatusBar ReactNative)))
 (def text (r/adapt-react-class (.-Text ReactNative)))
 (def view (r/adapt-react-class (.-View ReactNative)))
-(def image (r/adapt-react-class (.-Image ReactNative)))
+(def Image (.-Image ReactNative))
+(def image (r/adapt-react-class Image))
 (def touchable-highlight (r/adapt-react-class (.-TouchableHighlight ReactNative)))
 (def touchable-opacity (r/adapt-react-class (.-TouchableOpacity ReactNative)))
 (def camera (r/adapt-react-class (.-default Camera)))
@@ -261,13 +269,18 @@ At any point before or during the show you may click the icon below to take a ph
   (let [show (subscribe [:show])]
     (fn []
       (let [{:keys [image-uri message-content]} @show]
-        [view {:style (:container styles)}
+        [view {:style (assoc (:container styles)
+                             :flex 1
+                             :align-items "center"
+                             :justify-content "center")}
          [text {:style (:text styles) }@show]
-         (cond
-           image-uri [image {:source {:uri image-uri}
-                             :style {:width 400 :height 400}}]
-           message-content [text {:style (:text styles)} message-content]
-           :else preshow-blurb)]))))
+         (when image-uri
+           [image {:source {:uri image-uri}
+                   :style {:width 400 :height 600
+                           :resizeMode (.. Image -resizeMode -contain)}}])
+         (when message-content
+           [view {:style (:text-message-box styles)}
+            [text {:style (:text styles)} message-content]])]))))
 
 (defn scene-wrapper [child]
   (let [ssid (subscribe [:ssid])]
