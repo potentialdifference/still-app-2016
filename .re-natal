@@ -11,7 +11,8 @@
     "react-native-camera",
     "react-native-network-info",
     "react-native-keep-awake",
-    "react-native-network-info"
+    "react-native-network-info",
+    "react-native-fetch-blob"
   ],
   "imageDirs": [
     "images"

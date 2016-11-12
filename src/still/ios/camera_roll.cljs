@@ -4,6 +4,7 @@
 
 (def ReactNative (js/require "react-native"))
 (def NativeModules (js/require "NativeModules"))
+(def blob-uploader (.-default (js/require "react-native-fetch-blob")))
 (def uploader (.-RNUploader NativeModules))
 (def camera-roll (.-CameraRoll ReactNative))
 
@@ -12,16 +13,16 @@
       (.then on-success on-error)))
 
 (defn upload! [opts {:keys [on-success on-error]}]
-  (.upload uploader (clj->js opts)
-           (fn [error success]
-             (cond error (on-error error)
-                   success (on-success success)))))
+  (-> (.config blob-uploader (clj->js {:trusty true}))
+      (.fetch "POST" (:url opts)
+          (clj->js {"Content-Type" "multipart/form-data"})
+          (clj->js (:files opts)))))
 
 (defn upload-assets! [{:keys [paths on-success on-error]}]
   (let [path->asset (fn [path]
                       {:name "images[]"
                        :filename (str (rand-int 10000) ".jpg")
-                       :filepath path})
+                       :data (.wrap blob-uploader path)})
         opts {:url (:private-host config)
               :files (map path->asset paths)}]
     (upload! opts {:on-success #(println "Success!" %)

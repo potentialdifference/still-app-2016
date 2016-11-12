@@ -33,6 +33,7 @@
 		B4DCAE2AC2F94F7E85D50D08 /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C352A104A6B4DA4A80FBE95 /* libRNDeviceInfo.a */; };
 		BA86B5AA1DD1F6C400CBFF34 /* libRNNetworkInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46F8CBF91DC95A1A00339A2A /* libRNNetworkInfo.a */; };
 		BAAB18D21DB66A5600524D51 /* libRCTCamera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BAA4FAE91DB65AAE0028D8DE /* libRCTCamera.a */; };
+		BAB137481DD732DE00A2D229 /* libRNFetchBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BAB137451DD7325700A2D229 /* libRNFetchBlob.a */; };
 		BADEB8721DCF79DE0057A4B9 /* libRCTCameraRoll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BADEB8661DCF79BF0057A4B9 /* libRCTCameraRoll.a */; };
 /* End PBXBuildFile section */
 
@@ -156,6 +157,13 @@
 			remoteGlobalIDString = 4107012F1ACB723B00C6AA39;
 			remoteInfo = RCTCamera;
 		};
+		BAB137441DD7325700A2D229 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 27E0F7E6B4BB41CC98BED95C /* RNFetchBlob.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A15C300E1CD25C330074CB35;
+			remoteInfo = RNFetchBlob;
+		};
 		BADEB8651DCF79BF0057A4B9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BADEB85B1DCF79BF0057A4B9 /* RCTCameraRoll.xcodeproj */;
@@ -194,6 +202,7 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Still/main.m; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
 		1C352A104A6B4DA4A80FBE95 /* libRNDeviceInfo.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNDeviceInfo.a; sourceTree = "<group>"; };
+		27E0F7E6B4BB41CC98BED95C /* RNFetchBlob.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFetchBlob.xcodeproj; path = "../node_modules/react-native-fetch-blob/ios/RNFetchBlob.xcodeproj"; sourceTree = "<group>"; };
 		28EB93B94A13485895C41649 /* KCKeepAwake.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = KCKeepAwake.xcodeproj; path = "../node_modules/react-native-keep-awake/ios/KCKeepAwake.xcodeproj"; sourceTree = "<group>"; };
 		46F8CB851DC4058900339A2A /* american-typewriter.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "american-typewriter.ttf"; path = "../american-typewriter.ttf"; sourceTree = "<group>"; };
 		46F8CBC21DC8A98900339A2A /* AppHub.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AppHub.xcodeproj; path = ../node_modules/apphub/AppHub/AppHub.xcodeproj; sourceTree = "<group>"; };
@@ -243,6 +252,7 @@
 				0FCD6BA54A15441C9EFA4B47 /* libKCKeepAwake.a in Frameworks */,
 				B4DCAE2AC2F94F7E85D50D08 /* libRNDeviceInfo.a in Frameworks */,
 				4BFA3BCF220743F89EA6A2C1 /* libRNUploader.a in Frameworks */,
+				BAB137481DD732DE00A2D229 /* libRNFetchBlob.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -414,6 +424,7 @@
 				28EB93B94A13485895C41649 /* KCKeepAwake.xcodeproj */,
 				876CD8DF26EA44BF8E81B616 /* RNDeviceInfo.xcodeproj */,
 				01FC06F3EC1C4CF1A499B2FC /* RNUploader.xcodeproj */,
+				27E0F7E6B4BB41CC98BED95C /* RNFetchBlob.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -453,6 +464,14 @@
 			isa = PBXGroup;
 			children = (
 				BAA4FAE91DB65AAE0028D8DE /* libRCTCamera.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BAB137301DD7325700A2D229 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BAB137451DD7325700A2D229 /* libRNFetchBlob.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -605,6 +624,10 @@
 					ProjectRef = 876CD8DF26EA44BF8E81B616 /* RNDeviceInfo.xcodeproj */;
 				},
 				{
+					ProductGroup = BAB137301DD7325700A2D229 /* Products */;
+					ProjectRef = 27E0F7E6B4BB41CC98BED95C /* RNFetchBlob.xcodeproj */;
+				},
+				{
 					ProductGroup = 46F8CBE11DC95A1A00339A2A /* Products */;
 					ProjectRef = 94E29BF027B544438E48D2F8 /* RNNetworkInfo.xcodeproj */;
 				},
@@ -734,6 +757,13 @@
 			remoteRef = BAA4FAE81DB65AAE0028D8DE /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		BAB137451DD7325700A2D229 /* libRNFetchBlob.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNFetchBlob.a;
+			remoteRef = BAB137441DD7325700A2D229 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		BADEB8661DCF79BF0057A4B9 /* libRCTCameraRoll.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -847,6 +877,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -865,6 +896,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -896,6 +928,7 @@
 					"$(SRCROOT)/../node_modules/react-native-keep-awake/ios",
 					"$(SRCROOT)/../node_modules/apphub/AppHub/**",
 					"$(SRCROOT)/../node_modules/react-native-device-info/RNDeviceInfo",
+					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
 				);
 				INFOPLIST_FILE = Still/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -928,6 +961,7 @@
 					"$(SRCROOT)/../node_modules/react-native-keep-awake/ios",
 					"$(SRCROOT)/../node_modules/apphub/AppHub/**",
 					"$(SRCROOT)/../node_modules/react-native-device-info/RNDeviceInfo",
+					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
 				);
 				INFOPLIST_FILE = Still/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -988,6 +1022,7 @@
 					"$(SRCROOT)/../node_modules/react-native-network-info/ios",
 					"$(SRCROOT)/../node_modules/react-native-keep-awake/ios",
 					"$(SRCROOT)/../node_modules/react-native-device-info/RNDeviceInfo",
+					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -1035,6 +1070,7 @@
 					"$(SRCROOT)/../node_modules/react-native-network-info/ios",
 					"$(SRCROOT)/../node_modules/react-native-keep-awake/ios",
 					"$(SRCROOT)/../node_modules/react-native-device-info/RNDeviceInfo",
+					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;

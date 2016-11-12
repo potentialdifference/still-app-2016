@@ -11,6 +11,7 @@
     "react-native": "0.34.0",
     "react-native-camera": "git+https://github.com/henrygarner/react-native-camera.git",
     "react-native-device-info": "^0.9.6",
+    "react-native-fetch-blob": "^0.10.0",
     "react-native-keep-awake": "^1.0.7",
     "react-native-network-info": "^0.2.0",
     "react-native-uploader": "0.0.9"
