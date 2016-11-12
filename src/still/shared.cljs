@@ -1,5 +1,5 @@
 (ns still.shared
-  (:require [re-frame.core :refer [dispatch]]))
+  (:require [re-frame.core :refer [dispatch subscribe]]))
 
 (def network-info (js/require "react-native-network-info"))
 (def Camera (js/require "react-native-camera"))

@@ -2,9 +2,13 @@
   (:require
     [re-frame.core :refer [reg-event-db after dispatch reg-event-fx reg-fx]]
     [clojure.spec :as s]
+    [clojure.string :as str]
     [still.db :as db :refer [app-db]]
     [still.shared :as shared]
     [still.config :refer [config]]))
+
+(def ReactNative (js/require "react-native"))
+(def Vibration (.-Vibration ReactNative))
 
 (defn dec-to-zero
   "Same as dec if not zero"
@@ -12,6 +16,13 @@
   (if (< 0 arg)
     (dec arg)
     arg))
+
+(def DeviceInfo (js/require "react-native-device-info"))
+(defn device-name []
+  (let [name (.getDeviceName DeviceInfo)]
+    (if (str/includes? name "’")
+      (str/replace name #"’.+$" "")
+      "there")))
 
 
 ;; -- Middleware ------------------------------------------------------------
@@ -37,7 +48,8 @@
   :initialize-db
   validate-spec-mw
   (fn [empty-db [_ route]]
-    (app-db route)))
+    (let [device-name (device-name)]
+      (app-db route device-name))))
 
 (reg-event-db
  :initial-events
@@ -132,14 +144,23 @@
    (println "Queueing for upload..." path)
    (update db :upload-queue conj path)))
 
-(reg-event-db
+(reg-fx
+ :buzz
+ (fn [world [_ millis]]
+   (.vibrate Vibration)))
+
+(reg-event-fx
  :display-image
  validate-spec-mw
- (fn  [db [_ uri]]
-   (assoc-in db [:show :image-uri] uri)))
+ (fn  [{:keys [db]} [_ uri]]
+   {:db (assoc-in db [:show :image-uri] uri)
+    :buzz true}))
 
-(reg-event-db
+(reg-event-fx
  :display-text
  validate-spec-mw
- (fn [db [_ content]]
-   (assoc-in db [:show :message-content] content)))
+ (fn [{:keys [db]} [_ content]]
+   (let [device-name (:device-name db)
+         content (str/replace content "{name}" device-name)]
+     {:db (assoc-in db [:show :message-content] content)
+      :buzz true})))

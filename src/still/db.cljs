@@ -8,6 +8,7 @@
 (s/def ::ssid string?)
 (s/def ::album-queued? boolean?)
 (s/def ::privacy-policy-agreed? boolean?)
+(s/def ::device-name string?)
 
 (s/def ::asset-path string?)
 
@@ -27,11 +28,12 @@
                                  ::album-queued?
                                  ::privacy-policy-agreed?
                                  ::upload-queue
-                                 ::show]))
+                                 ::show
+                                 ::device-name]))
 
 ;; initial state of app-db
 (defn app-db
-  [route]
+  [route device-name]
   {:message "Initial message"
    :images []
    :nav {:index 0
@@ -41,4 +43,5 @@
    :album-queued? false
    :privacy-policy-agreed? false
    :upload-queue []
-   :show {}})
+   :show {}
+   :device-name device-name})
