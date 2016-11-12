@@ -21,10 +21,13 @@
                               ::key
                               ::routes]))
 
+(s/def ::show (s/keys :opt-un [::image-uri ::message-content]))
+
 (s/def ::app-db (s/keys :req-un [::nav ::message ::images ::ssid
                                  ::album-queued?
                                  ::privacy-policy-agreed?
-                                 ::upload-queue]))
+                                 ::upload-queue
+                                 ::show]))
 
 ;; initial state of app-db
 (defn app-db
@@ -34,7 +37,8 @@
    :nav {:index 0
          :key :home
          :routes [route]}
-   :ssid ""
+   :ssid "FETCHING"
    :album-queued? false
    :privacy-policy-agreed? false
-   :upload-queue []})
+   :upload-queue []
+   :show {}})

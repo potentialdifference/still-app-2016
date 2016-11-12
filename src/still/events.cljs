@@ -106,7 +106,7 @@
 (reg-event-fx
  :fetch-ssid-periodically
  (fn [cofx _]
-   {:dispatch-later [{:ms 30000 :dispatch [:fetch-ssid-periodically]}]
+   {:dispatch-later [{:ms 10000 :dispatch [:fetch-ssid-periodically]}]
     :get-ssid #(dispatch [:set-ssid %])}))
 
 (reg-event-db
@@ -136,10 +136,10 @@
  :display-image
  validate-spec-mw
  (fn  [db [_ uri]]
-   db))
+   (assoc-in db [:show :image-uri] uri)))
 
 (reg-event-db
  :display-text
  validate-spec-mw
  (fn [db [_ content]]
-   db))
+   (assoc-in db [:show :message-content] content)))

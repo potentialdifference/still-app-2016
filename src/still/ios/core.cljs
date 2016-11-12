@@ -36,7 +36,10 @@
                           :left     0
                           :bottom   0
                           :right    0}
-   :container            {:flex 1 :padding 40 :align-items "center" :background-color "black" :position "relative"}
+   :container            {:flex 1
+                          :align-items "center"
+                          :background-color "black"
+                          :position "relative"}
    :container-no-padding {:flex 1 :background-color "black" :padding 0 :justify-content "space-around"}
    :about-container      {:flex 1 :justify-content "center" :background-color "black"}
    :about-row            {:flex 1 :flex-direction "row" :justify-content "center" :align-items "center"}
@@ -79,6 +82,12 @@
    :text                 {:font-family "American Typewriter"
                           :color "white"
                           :text-align "center"}
+   :header-text          {:font-size 30
+                          :font-weight "100"
+                          :margin-bottom 20
+                          :text-align "center"
+                          :color "white"
+                          :font-family "American Typewriter"}
    :show-mode-text       {:font-size 24
                           :line-height 40
                           :text-align "justify"
@@ -197,29 +206,26 @@
 
 (defn privacy-policy-view []
   [view
+   [text {:style (:header-text styles)} "Privacy Policy"]
    [text {:style (:text styles)}
-    "To proceed you must agree to our privacy policy."]
+    "To proceed you must agree to our privacy policy. If you do not agree, please close the application."]
    [button "I agree" {:on-press #(dispatch [:set-privacy-policy-agreed true])}]])
 
 (defn home-view []
   [view
-   [text {:style {:font-size 30 :font-weight "100" :margin-bottom 20 :text-align "center" :color "white" :font-family "American Typewriter"}} "Still"]
+   [text {:style (:header-text styles)} "Still"]
    [image {:source vivian-img}]
    [button "About Vivian Maier" {:on-press #(dispatch [:nav/push {:key :about :title "About Vivian Maier"}])}]
-   [button "Take a picture" {:on-press #(dispatch [:nav/push {:key :take-picture :title "Take picture"  :font-family "American Typewriter"}])}]
    [button "Enter show mode" {:on-press #(dispatch [:nav/push {:key :show-mode :title "Show mode"}])}]
-   [button "Test fetching images" {:on-press #(dispatch [:upload-album! (constantly true)])}]
    [view {:style {:flex 1 :justify-content "flex-end" :flex-direction "column"}} [text {:style {:color "white" :font-size 10 :text-align "center" :flex 1 :font-family "American Typewriter"}}
                                                                                   "Images ©Vivian Maier/Maloof Collection, Courtesy Howard Greenberg Gallery, New York"]]])
 
 (defn home-screen []
   (let [agreed? (subscribe [:privacy-policy-agreed?])]
     (fn []
-      [view {:style (:container styles)}
-       [status-bar {:animated true :hidden true}]
-       (if @agreed?
-         [home-view]
-         [privacy-policy-view])])))
+      (if @agreed?
+        [home-view]
+        [privacy-policy-view]))))
 
 (defn nav-title [props]
     (.log js/console "props" props)
@@ -229,47 +235,77 @@
 (defn header
   [props]
   (let [ssid (subscribe [:ssid])]
-    [view
-     (when-not (contains? (:valid-ssids config) @ssid)
-       [view {:style {:background-color "red"
-                      :padding 10}}
-        [text "Please ensure your device is connected to the network"]])
-     [navigation-header
-      (assoc
-       (js->clj props)
-       :render-title-component #(r/as-element (nav-title %))
-       :on-navigate-back #(dispatch [:nav/pop nil])
-       :style {:background-color "white" :border-bottom-color "white"})]]))
+    (fn []
+      [view
+       (when-not (or (= @ssid (:default-ssid config))
+                     (contains? (:valid-ssids config) @ssid))
+         [view {:style {:background-color "red"
+                        :padding 10}}
+          [text "Please ensure your device is connected to the network"]])
+       [navigation-header
+        (assoc
+         (js->clj props)
+         :render-title-component #(r/as-element (nav-title %))
+         :on-navigate-back #(dispatch [:nav/pop nil])
+         :style {:background-color "white" :border-bottom-color "white"})]])))
+
+(def preshow-blurb
+  [text {:style (:text styles)}
+   "Your device is now in 'show mode'.
+
+Further instructions will be given to you at the beginning of the performance.
+
+At any point before or during the show you may click the icon below to take a photo. Why not practice now, whilst you're waiting?"])
 
 (defn show-mode []
-  [view {:style (:container styles)}
-   [image {:source {:uri "http://10.0.1.2:8080/public/test1.jpg"}
-           :style {:width 400 :height 400}}]
-   ;; [text {:style (:show-mode-text styles)} lorem]
-   ])
+  (let [show (subscribe [:show])]
+    (fn []
+      (let [{:keys [image-uri message-content]} @show]
+        [view {:style (:container styles)}
+         [text {:style (:text styles) }@show]
+         (cond
+           image-uri [image {:source {:uri image-uri}
+                             :style {:width 400 :height 400}}]
+           message-content [text {:style (:text styles)} message-content]
+           :else preshow-blurb)]))))
+
+(defn scene-wrapper [child]
+  (let [ssid (subscribe [:ssid])]
+    (fn []
+      [view {:style (:container styles)}
+       [status-bar {:animated true :hidden true}]
+       (when-not (or (= @ssid (:default-ssid config))
+                     (contains? (:valid-ssids config) @ssid))
+         [view {:style {:background-color "red"
+                        :padding 10}}
+          [text "Please ensure your device is connected to the network"]])
+       [view {:padding 40}
+        child]])))
+
+(defn scene-wrapper-wrapper [child]
+  [scene-wrapper child])
 
 (defn scene [props]
   (let [opts (js->clj props :keywordize-keys true)]
-
     ;; [view {:margin 10} [text (str (-> opts :scene :route :key))]]
-
-    (case (-> opts :scene :route :key)
-      "first-route" [home-screen]
-      "take-picture" [take-picture]
-      "show-mode" [show-mode]
-      "about" [about-overview]
-      "about-view-1" [about-view-picture :one]
-      "about-view-2" [about-view-picture :two]
-      "about-view-3" [about-view-picture :three]
-      "about-view-4" [about-view-picture :four]
-      "about-view-5" [about-view-picture :five]
-      "about-view-6" [about-view-picture :six])))
+    (scene-wrapper-wrapper
+     (case (-> opts :scene :route :key)
+       "first-route" [home-screen]
+       "take-picture" [take-picture]
+       "show-mode" [show-mode]
+       "about" [about-overview]
+       "about-view-1" [about-view-picture :one]
+       "about-view-2" [about-view-picture :two]
+       "about-view-3" [about-view-picture :three]
+       "about-view-4" [about-view-picture :four]
+       "about-view-5" [about-view-picture :five]
+       "about-view-6" [about-view-picture :six]))))
 
 (defn app-root []
   (let [nav (subscribe [:nav/state])]
     (fn []
       [card-stack {:on-navigate-back #(dispatch [:nav/pop nil])
-                   :render-header   #(r/as-element (header %))
+                   ;; :render-header   #(r/as-element (header %))
                    :navigation-state @nav
                    :style            {:flex 1}
                    :render-scene     #(r/as-element (scene %))}])))

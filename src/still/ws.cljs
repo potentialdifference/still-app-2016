@@ -10,7 +10,8 @@
               (js/console.log (pr-str message))
               (case (:instruction message)
                 "displayText" (dispatch [:display-text (:content message)])
-                "displayImage" (dispatch [:display-image (:uri message)])))))
+                "displayImage" (dispatch [:display-image (str (:public-host config)
+                                                              (:path message))])))))
     (set! ws.onclose (fn []
                        (js/console.log "Websocket closed!")
                        (js/setTimeout #(start-websocket-client! config) 5000)))))
