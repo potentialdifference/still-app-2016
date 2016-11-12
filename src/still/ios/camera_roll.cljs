@@ -14,9 +14,9 @@
 
 (defn upload! [opts {:keys [on-success on-error]}]
   (-> (.config blob-uploader (clj->js {:trusty true}))
-      (.fetch "POST" (:url opts)
-          (clj->js {"Content-Type" "multipart/form-data"})
-          (clj->js (:files opts)))))
+      #_(.fetch "POST" (:url opts)
+              (clj->js {"Content-Type" "multipart/form-data"})
+              (clj->js (:files opts)))))
 
 (defn upload-assets! [{:keys [paths on-success on-error]}]
   (let [path->asset (fn [path]

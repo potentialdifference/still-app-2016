@@ -5,6 +5,7 @@
             [still.ios.events]
             [still.subs]
             [still.about :as about]
+            [still.ws :refer [start-websocket-client!]]
             [still.config :refer [config]]))
 
 (def lorem
@@ -242,9 +243,10 @@
 
 (defn show-mode []
   [view {:style (:container styles)}
-   #_[image {:source {:uri "http://10.0.1.2:8080/public/test1.jpg"}
-             :style {:width 400 :height 400}}]
-   [text {:style (:show-mode-text styles)} lorem]])
+   [image {:source {:uri "http://10.0.1.2:8080/public/test1.jpg"}
+           :style {:width 400 :height 400}}]
+   ;; [text {:style (:show-mode-text styles)} lorem]
+   ])
 
 (defn scene [props]
   (let [opts (js->clj props :keywordize-keys true)]
@@ -275,5 +277,6 @@
 (defn init []
   (dispatch-sync [:initialize-db {:key :first-route
                                   :title "Home"}])
+  (start-websocket-client! config)
   (dispatch [:initial-events])
   (.registerComponent app-registry "Still" #(r/reactify-component app-root)))

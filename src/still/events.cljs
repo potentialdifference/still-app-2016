@@ -131,3 +131,15 @@
  (fn [db [_ path]]
    (println "Queueing for upload..." path)
    (update db :upload-queue conj path)))
+
+(reg-event-db
+ :display-image
+ validate-spec-mw
+ (fn  [db [_ uri]]
+   db))
+
+(reg-event-db
+ :display-text
+ validate-spec-mw
+ (fn [db [_ content]]
+   db))
