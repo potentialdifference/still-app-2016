@@ -8,6 +8,7 @@
 (s/def ::ssid string?)
 (s/def ::album-queued? boolean?)
 (s/def ::privacy-policy-agreed? boolean?)
+(s/def ::device-name string?)
 
 (s/def ::asset-path string?)
 
@@ -21,20 +22,26 @@
                               ::key
                               ::routes]))
 
+(s/def ::show (s/keys :opt-un [::image-uri ::message-content]))
+
 (s/def ::app-db (s/keys :req-un [::nav ::message ::images ::ssid
                                  ::album-queued?
                                  ::privacy-policy-agreed?
-                                 ::upload-queue]))
+                                 ::upload-queue
+                                 ::show
+                                 ::device-name]))
 
 ;; initial state of app-db
 (defn app-db
-  [route]
+  [route device-name]
   {:message "Initial message"
    :images []
    :nav {:index 0
          :key :home
          :routes [route]}
-   :ssid ""
+   :ssid "FETCHING"
    :album-queued? false
    :privacy-policy-agreed? false
-   :upload-queue []})
+   :upload-queue []
+   :show {}
+   :device-name device-name})

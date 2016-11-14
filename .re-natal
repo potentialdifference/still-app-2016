@@ -10,7 +10,9 @@
   "modules": [
     "react-native-camera",
     "react-native-keep-awake",
-    "react-native-network-info"
+    "react-native-network-info",
+    "react-native-fetch-blob",
+    "react-native-device-info"
   ],
   "imageDirs": [
     "images"

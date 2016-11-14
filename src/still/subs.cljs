@@ -20,3 +20,8 @@
  :privacy-policy-agreed?
  (fn [db _]
    (:privacy-policy-agreed? db)))
+
+(reg-sub
+ :show
+ (fn [db _]
+   (:show db)))

@@ -2,10 +2,14 @@
   (:require
     [re-frame.core :refer [reg-event-db after dispatch reg-event-fx reg-fx]]
     [clojure.spec :as s]
+    [clojure.string :as str]
     [still.db :as db :refer [app-db]]
     [still.shared :as shared]
     [still.android.events]
     [still.config :refer [config]]))
+
+(def ReactNative (js/require "react-native"))
+(def Vibration (.-Vibration ReactNative))
 
 (defn dec-to-zero
   "Same as dec if not zero"
@@ -13,6 +17,13 @@
   (if (< 0 arg)
     (dec arg)
     arg))
+
+(def DeviceInfo (js/require "react-native-device-info"))
+(defn device-name []
+  (let [name (.getDeviceName DeviceInfo)]
+    (if (str/includes? name "’")
+      (str/replace name #"’.+$" "")
+      "there")))
 
 
 ;; -- Middleware ------------------------------------------------------------
@@ -38,7 +49,8 @@
   :initialize-db
   validate-spec-mw
   (fn [empty-db [_ route]]
-    (app-db route)))
+    (let [device-name (device-name)]
+      (app-db route device-name))))
 
 (reg-event-db
  :initial-events
@@ -107,7 +119,7 @@
 (reg-event-fx
  :fetch-ssid-periodically
  (fn [cofx _]
-   {:dispatch-later [{:ms 30000 :dispatch [:fetch-ssid-periodically]}]
+   {:dispatch-later [{:ms 10000 :dispatch [:fetch-ssid-periodically]}]
     :get-ssid #(dispatch [:set-ssid %])}))
 
 (reg-event-db
@@ -132,3 +144,24 @@
  (fn [db [_ path]]
    (println "Queueing for upload..." path)
    (update db :upload-queue conj path)))
+
+(reg-fx
+ :buzz
+ (fn [world [_ millis]]
+   (.vibrate Vibration)))
+
+(reg-event-fx
+ :display-image
+ validate-spec-mw
+ (fn  [{:keys [db]} [_ uri]]
+   {:db (assoc-in db [:show :image-uri] uri)
+    :buzz true}))
+
+(reg-event-fx
+ :display-text
+ validate-spec-mw
+ (fn [{:keys [db]} [_ content]]
+   (let [device-name (:device-name db)
+         content (str/replace content "{name}" device-name)]
+     {:db (assoc-in db [:show :message-content] content)
+      :buzz true})))
