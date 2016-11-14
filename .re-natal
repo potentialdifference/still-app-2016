@@ -1,7 +1,7 @@
 {
   "name": "Still",
   "interface": "reagent6",
-  "androidHost": "10.0.2.2",
+  "androidHost": "localhost",
   "iosHost": "10.0.1.2",
   "envRoots": {
     "dev": "env/dev",
@@ -9,7 +9,6 @@
   },
   "modules": [
     "react-native-camera",
-    "react-native-network-info",
     "react-native-keep-awake",
     "react-native-network-info"
   ],

@@ -4,6 +4,7 @@
     [clojure.spec :as s]
     [still.db :as db :refer [app-db]]
     [still.shared :as shared]
+    [still.android.events]
     [still.config :refer [config]]))
 
 (defn dec-to-zero

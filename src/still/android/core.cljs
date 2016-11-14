@@ -2,13 +2,18 @@
   (:require [reagent.core :as r :refer [atom]]
             [re-frame.core :refer [subscribe dispatch dispatch-sync]]
             [still.events]
+            [still.android.events]
             [still.subs]
-            [still.about :as about]))
+            [still.about :as about]
+            [still.config :refer [config]]))
+
+(def lorem
+  "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.")
 
 (def ReactNative (js/require "react-native"))
 (def Camera (js/require "react-native-camera"))
 
-(def network-info (js/require "react-native-network-info"))
+
 (def KeepAwake (js/require "react-native-keep-awake"))
 (def keep-awake (.-default KeepAwake))
 
@@ -18,7 +23,6 @@
 (def header-title (r/adapt-react-class (.-Title (.-Header (.-NavigationExperimental ReactNative)))))
 
 (def capture-image (js/require "./images/ic_photo_camera_36pt.png"))
-
 (defn dimensions [from]
   (-> (.-Dimensions ReactNative)
       (.get from)
@@ -34,7 +38,7 @@
    :container-no-padding {:flex 1 :background-color "black" :padding 0 :justify-content "space-around"}
    :about-container      {:flex 1 :justify-content "center" :background-color "black"}
    :about-row            {:flex 1 :flex-direction "row" :justify-content "center" :align-items "center"}
-   :button               {:background-color "#999" :padding 10 :border-radius 5 :margin-top 10}
+   :button               {:background-color "white" :margin 10 :padding 10 :border-radius 5 :margin-top 10}
    :preview              {:position "absolute"
                           :top      0
                           :left     0
@@ -70,7 +74,15 @@
    :pre-show-button-text {
                           :color "black" :font-size 20 :font-family "American Typewriter"}
    :pre-show-image       {:resizeMode "contain" :flex 1 :width nil :height nil}
-   :text                 {:font-family "American Typewriter"}})
+   :text                 {:font-family "American Typewriter"
+                          :color "white"
+                          :text-align "center"}
+   :show-mode-text       {:font-size 24
+                          :line-height 40
+                          :text-align "justify"
+                          :background-color "black"
+                          :color "white"
+                          :font-family "American Typewriter"}})
 
 
 (def app-registry (.-AppRegistry ReactNative))
@@ -86,9 +98,6 @@
 (def logo-img (js/require "./images/cljs.png"))
 (def vivian-img (js/require "./images/vivian.png"))
 
-(defn alert [title]
-      (.alert (.-Alert ReactNative) title))
-
 (def secret-camera
   (with-meta
     (fn [opts]
@@ -96,7 +105,8 @@
     {:component-did-mount
      (fn [this]
        (dispatch [:take-delayed-picture]))}))
-
+(defn alert [title]
+  (.alert (.-Alert ReactNative) title))
 
 (defn take-picture []
   (fn []
@@ -173,54 +183,87 @@
                    :color "white" :font-family "American Typewriter"}}
      (:one about/captions)]]])
 
-(defn home-screen []
-  [view {:style (:container styles)}
-   [status-bar {:animated true :hidden true}]
+(defn button [label {:keys [on-press]}]
+  [touchable-highlight {:style (:button styles)
+                        :on-press on-press}
+   [text {:style {:color "black"
+                  :border-color "white"
+                  :background-color "white"
+                  :text-align "center"
+                  :font-weight "bold"
+                  :font-family "American Typewriter"}}
+    label]])
 
+(defn privacy-policy-view []
+  [view
+   [text {:style (:text styles)}
+    "To proceed you must agree to our privacy policy."]
+   [button "I agree" {:on-press #(dispatch [:set-privacy-policy-agreed true])}]])
+
+(defn home-view []
+  [view
    [text {:style {:font-size 30 :font-weight "100" :margin-bottom 20 :text-align "center" :color "white" :font-family "American Typewriter"}} "Still"]
    [image {:source vivian-img}]
-   [touchable-highlight {:style (:button styles)
-                         :on-press #(dispatch [:nav/push {:key :about
-                                                          :title "Info view"}])}
-    [text {:style {:color "white" :text-align "center" :font-weight "bold"  :font-family "American Typewriter"}}
-     "About Vivian Maier"]]
-   [touchable-highlight {:style (:button styles)
-                         :on-press #(dispatch [:nav/push {:key :take-picture
-                                                          :title "Take picture"  :font-family "American Typewriter"}])}
-    [text {:style {:color "white" :text-align "center" :font-weight "bold"  :font-family "American Typewriter"}}
-     "Take a picture"]]
-    [view {:style {:flex 1 :justify-content "flex-end" :flex-direction "column"}} [text {:style {:color "white" :text-align "center" :font-weight "bold" :flex 1 :font-family "American Typewriter"}}
-           "Images ©Vivian Maier/Maloof Collection, Courtesy Howard Greenberg Gallery, New York"]] ])
+   [button "About Vivian Maier" {:on-press #(dispatch [:nav/push {:key :about :title "About Vivian Maier"}])}]
+   [button "Take a picture" {:on-press #(dispatch [:nav/push {:key :take-picture :title "Take picture"  :font-family "American Typewriter"}])}]
+   [button "Enter show mode" {:on-press #(dispatch [:nav/push {:key :show-mode :title "Show mode"}])}]
+   [button "Test fetching images" {:on-press #(dispatch [:upload-album! (constantly true)])}]
+   [view {:style {:flex 1 :justify-content "flex-end" :flex-direction "column"}} [text {:style {:color "white" :font-size 10 :text-align "center" :flex 1 :font-family "American Typewriter"}}
+                                                                                  "Images ©Vivian Maier/Maloof Collection, Courtesy Howard Greenberg Gallery, New York"]]])
+
+(defn home-screen []
+  (let [agreed? (subscribe [:privacy-policy-agreed?])]
+    (fn []
+      [view {:style (:container styles)}
+       [status-bar {:animated true :hidden true}]
+       (if @agreed?
+         [home-view]
+         [privacy-policy-view])])))
+
 
 (defn nav-title [props]
   (.log js/console "props" props)
-  [header-title (aget props "scene" "route" "title")])
+  [header-title
+   (aget props "scene" "route" "title")])
 
 (defn header
   [props]
-  [navigation-header
-   (assoc
-     (js->clj props)
-     :render-title-component #(r/as-element (nav-title %))
-     :on-navigate-back #(dispatch [:nav/pop nil]))])
+  (let [ssid (subscribe [:ssid])]
+    [view
+     (when-not (contains? (:valid-ssids config) @ssid)
+       [view {:style {:background-color "red"
+                      :padding 10}}
+        [text "Please ensure your device is connected to the network"]])
+     [navigation-header
+      (assoc
+        (js->clj props)
+        :render-title-component #(r/as-element (nav-title %))
+        :on-navigate-back #(dispatch [:nav/pop nil])
+        :style {:background-color "white" :border-bottom-color "white"})]]))
+
+
+(defn show-mode []
+  [view {:style (:container styles)}
+   #_[image {:source {:uri "http://10.0.1.2:8080/public/test1.jpg"}
+             :style {:width 400 :height 400}}]
+   [text {:style (:show-mode-text styles)} "Show mode"]])
 
 (defn scene [props]
-  (.log js/console props)
   (let [opts (js->clj props :keywordize-keys true)]
-    [view {:margin 10 :flex 1} [text (str (-> opts :scene :route :key))]]
+
+    ;; [view {:margin 10} [text (str (-> opts :scene :route :key))]]
 
     (case (-> opts :scene :route :key)
       "first-route" [home-screen]
       "take-picture" [take-picture]
+      "show-mode" [show-mode]
       "about" [about-overview]
       "about-view-1" [about-view-picture :one]
       "about-view-2" [about-view-picture :two]
       "about-view-3" [about-view-picture :three]
       "about-view-4" [about-view-picture :four]
       "about-view-5" [about-view-picture :five]
-      "about-view-6" [about-view-picture :six]
-
-      )))
+      "about-view-6" [about-view-picture :six])))
 
 (defn app-root []
   (let [nav (subscribe [:nav/state])]
