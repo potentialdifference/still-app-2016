@@ -44,7 +44,6 @@
         opts {:url (:upload-url config)
               :files (map path->asset assets)
               :user-id (js/encodeURIComponent user-id)}]
-    (js/alert user-id)
     (upload! opts {:on-success on-success
                    :on-error on-error})))
 
