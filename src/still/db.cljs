@@ -11,9 +11,8 @@
 (s/def ::images-sent? boolean?)
 (s/def ::device-name string?)
 
-(s/def ::asset-path string?)
-
-(s/def ::upload-queue (s/* ::asset-path))
+(s/def ::path string?)
+(s/def ::tag string?)
 
 (s/def ::route (s/keys :req-un [::key
                                 ::title]))
@@ -22,6 +21,11 @@
 (s/def ::nav (s/keys :req-un [::index
                               ::key
                               ::routes]))
+
+(s/def ::photo (s/keys :req-un [::path
+                                ::tag]))
+
+(s/def ::upload-queue (s/* ::photo))
 
 (s/def ::show (s/keys :opt-un [::image-uri ::message-content]))
 

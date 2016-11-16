@@ -100,18 +100,17 @@
      (and (contains? (:valid-ssids config) ssid)
           (-> cofx :db :privacy-policy-agreed?)
           (not (nil? (-> cofx :db :upload-queue peek))))
-     (assoc :upload-assets! {:paths (-> cofx :db :upload-queue)
+     (assoc :upload-assets! {:assets (-> cofx :db :upload-queue)
                              ;TODO! this is dangerous - quickfix but please replace me!
                              :on-success (fn [response] (dispatch [:pop-from-queue])
                                            (js/console.log "Success! Set to true" response))
                              :on-error #(js/console.log "Error uploading assets" %)
                              :device-name (-> cofx :db :device-name)}))))
 
-(reg-event-fx
- :upload-album!
- (fn [cofx [_ callback]]
-   {:upload-album! callback}))
-
+(reg-fx
+ :upload-assets!
+ (fn [opts]
+   (shared/upload-assets! opts)))
 
 (reg-event-db
   :pop-from-queue

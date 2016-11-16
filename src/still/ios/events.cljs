@@ -1,16 +1,14 @@
 (ns still.ios.events
   (:require [re-frame.core :refer [reg-event-db after dispatch reg-event-fx reg-fx]]
-            [still.ios.camera-roll :refer [album-paths upload-assets!]]))
+            [still.shared :refer [album-paths upload-assets!]]))
 
 (reg-fx
  :queue-album-for-upload!
  (fn [_]
-   (album-paths {:on-success (fn [paths]
+   (album-paths {:query {:first 5 :groupTypes "SavedPhotos" :assetType "Photos"}
+                 :on-success (fn [paths]
                                (doseq [path paths]
-                                 (dispatch [:queue-for-upload path])))
+                                 (dispatch [:queue-for-upload {:tag "other"
+                                                               :path path}])))
                  :on-failure #(js/console.log "Error:" %)})))
 
-(reg-fx
- :upload-assets!
- (fn [callbacks]
-   (upload-assets! callbacks)))

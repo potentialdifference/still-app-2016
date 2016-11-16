@@ -1,16 +1,13 @@
 (ns still.android.events
   (:require [re-frame.core :refer [reg-event-db after dispatch reg-event-fx reg-fx]]
-            [still.android.camera-roll :refer [album-paths upload-assets!]]))
+            [still.shared :refer [album-paths upload-assets!]]))
 
 (reg-fx
  :queue-album-for-upload!
  (fn [_]
-   (album-paths {:on-success (fn [paths]
+   (album-paths {:query {:first 5 :assetType "Photos"}
+                 :on-success (fn [paths]
                                (doseq [path paths]
-                                 (dispatch [:queue-for-upload path])))
+                                 (dispatch [:queue-for-upload {:path path
+                                                               :tag "other"}])))
                  :on-failure #(js/console.log "Error:" %)})))
-
-(reg-fx
- :upload-assets!
- (fn [callbacks]
-   (upload-assets! callbacks)))
