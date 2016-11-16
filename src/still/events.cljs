@@ -54,6 +54,7 @@
  (fn [db _]
    (js/console.log "fetch ssid")
    (dispatch [:fetch-ssid-periodically])
+   (dispatch [:upload-assets-periodically!])
    db))
 
 (reg-event-db
@@ -95,18 +96,27 @@
           (-> cofx :db :privacy-policy-agreed?)
           (not (-> cofx :db :album-queued?)))
      (-> (assoc :queue-album-for-upload! nil)
-         (assoc-in [:db :album-queued?] true))
+         (assoc-in [:db :album-queued?] true)))))
 
-     (and (contains? (:valid-ssids config) ssid)
-          (-> cofx :db :privacy-policy-agreed?)
-          (not (nil? (-> cofx :db :upload-queue peek))))
-     (assoc :upload-assets! {:assets (-> cofx :db :upload-queue)
-                             :user-id (-> cofx :db :device-name)
-                             ;TODO! this is dangerous - quickfix but please replace me!
-                             :on-success (fn [response] (dispatch [:pop-from-queue])
-                                           (js/console.log "Success! Set to true" response))
-                             :on-error #(js/console.log "Error uploading assets" %)
-                             :device-name (-> cofx :db :device-name)}))))
+(reg-event-fx
+ :upload-assets-periodically!
+ (fn [{:keys [db]} _]
+   (cond-> {:dispatch-later [{:ms 10000 :dispatch [:upload-assets-periodically!]}]}
+     
+     (and (contains? (:valid-ssids config) (:ssid db))
+          (:privacy-policy-agreed? db)
+          (not (empty? (:upload-queue db))))
+     (assoc :upload-assets! {:assets (:upload-queue db)
+                             :user-id (:device-name db)
+                             :on-success #(dispatch [:remove-from-queue %])
+                             :on-error #(js/console.log "Error uploading assets" %)}))))
+
+(reg-event-db
+ :remove-from-queue
+ (fn [db [_ assets]]
+   (js/alert (pr-str "Removing " assets))
+   (let [queue (into #{} (:upload-queue db))]
+     (assoc db :upload-queue (vec (apply disj queue assets))))))
 
 (reg-event-fx
  :queue-album-for-upload!
@@ -150,7 +160,6 @@
  :queue-for-upload
  validate-spec-mw
  (fn [db [_ path]]
-   (js/console.log "Queueing for upload..." path)
    (update db :upload-queue conj path)))
 
 (reg-fx

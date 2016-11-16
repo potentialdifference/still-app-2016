@@ -36,7 +36,7 @@
       (.then on-success on-error))) ;; TODO
 
 (defn upload-assets! [{:keys [assets user-id on-success on-error device-name]}]
-  ;; (js/alert "Uploading assets!")
+  (js/alert "Uploading assets!")
   (let [path->asset (fn [{:keys [path tag]}]
                       {:name tag
                        :filename (str (rand-int 10000) ".jpg")
@@ -44,7 +44,8 @@
         opts {:url (:upload-url config)
               :files (map path->asset assets)
               :user-id (js/encodeURIComponent user-id)}]
-    (upload! opts {:on-success on-success
+    (upload! opts {:on-success (fn [response]
+                                 (on-success assets))
                    :on-error on-error})))
 
 (defn myprint [arg]
