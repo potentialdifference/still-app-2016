@@ -114,7 +114,6 @@
 (reg-event-db
  :remove-from-queue
  (fn [db [_ assets]]
-   (js/alert (pr-str "Removing " assets))
    (let [queue (into #{} (:upload-queue db))]
      (assoc db :upload-queue (vec (apply disj queue assets))))))
 
@@ -148,13 +147,19 @@
 
 (reg-fx
  :take-picture!
- (fn [_]
-   (shared/take-picture!)))
+ (fn [opts]
+   (shared/take-picture! opts)))
 
 (reg-event-fx
  :take-picture
+ (fn [cofx [_ opts]]
+   {:take-picture! opts}))
+
+(reg-event-fx
+ :take-delayed-picture
  (fn [cofx _]
-   {:take-picture! nil}))
+   {:dispatch-later [{:ms 2000 :dispatch [:take-picture {:target :camera-roll
+                                                         :tag "front"}]}]}))
 
 (reg-event-db
  :queue-for-upload

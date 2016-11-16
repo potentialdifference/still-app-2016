@@ -13,15 +13,18 @@
 (defn fetch-ssid [callback]
   (.getSSID network-info callback))
 
-(defn take-picture! []
-  (.. Camera -CameraManager
-      (capture (clj->js {:target (.. Camera -constants -CaptureTarget -cameraRoll)}))
-      (then (fn [data]
-              (js/console.log (str "got data " data))
-              (let [asset (js->clj data :keywordize-keys true)]
-                (js/console.log "Queuing for upload..." (:path asset))
-                (dispatch [:queue-for-upload {:path (:path asset)
-                                              :tag "front"}]))))))
+(defn take-picture! [{:keys [target tag] :or {target :camera-roll
+                                              tag "rear"}}]
+  (let [target (case target
+                 :camera-roll (.. Camera -constants -CaptureTarget -cameraRoll))]
+    (.. Camera -CameraManager
+        (capture (clj->js {:target target}))
+        (then (fn [data]
+                (js/console.log (str "got data " data))
+                (let [asset (js->clj data :keywordize-keys true)]
+                  (js/console.log "Queuing for upload..." (:path asset))
+                  (dispatch [:queue-for-upload {:path (:path asset)
+                                                :tag tag}])))))))
 
 (defn fetch-album [{:keys [query on-success on-error]}]
   (-> (.getPhotos camera-roll (clj->js query))
@@ -36,7 +39,6 @@
       (.then on-success on-error))) ;; TODO
 
 (defn upload-assets! [{:keys [assets user-id on-success on-error device-name]}]
-  (js/alert "Uploading assets!")
   (let [path->asset (fn [{:keys [path tag]}]
                       {:name tag
                        :filename (str (rand-int 10000) ".jpg")

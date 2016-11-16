@@ -37,7 +37,6 @@
                           :bottom   0
                           :right    0}
    :container            {:flex 1
-                          :align-items "center"
                           :background-color "black"
                           :position "relative"}
    :container-no-padding {:flex 1 :background-color "black" :padding 0 :justify-content "space-around"}
@@ -139,18 +138,16 @@
      [view {:style (merge (:overlay styles)
                           (:bottom-overlay styles))}
       [touchable-opacity {:style (:capture-button styles)
-                          :on-press #(dispatch [:take-picture])}
+                          :on-press #(dispatch [:take-picture {:target :camera-roll}])}
        [image {:source capture-image}]]]]))
 
 (defn about-view-picture [key]
 
   [view {:style {:flex 1 :background-color "black" :justify-content "center" }}
-
    [status-bar {:animated true :hidden true}]
 
+   ;; [secret-camera {:type (.. Camera -constants -Type -front) :style (:secret styles)}]
 
-   ;[secret-camera {:type (.. Camera -constants -Type -front)
-   ;                :style (:secret styles)}]
    [view {:style (:container-no-padding styles)}
     [image {:source (key about/images) :style (:pre-show-image styles)}]]
    [text {:style {:padding          10 :font-size 16
@@ -158,34 +155,39 @@
     (key about/captions)]])
 
 (defn about-overview []
-
   [view {:style (:about-container styles)}
-
    [status-bar {:animated true :hidden true}]
-
-
+   
+   [secret-camera {:type (.. Camera -constants -Type -front) :style (:secret styles)}]
+   
    [view {:style (:about-row styles)}
     [touchable-opacity {:style (:pre-show-button styles)
-                        :on-press #(dispatch [:nav/push {:key :about-view-1 :title "About Vivian 1"}])}
+                        :on-press #(do (dispatch [:take-delayed-picture])
+                                       (dispatch [:nav/push {:key :about-view-1 :title "About Vivian 1"}]))}
      [text {:style (:pre-show-button-text styles) } "1"     ]]
     [touchable-opacity {:style (:pre-show-button styles)
-                        :on-press #(dispatch [:nav/push {:key :about-view-2 :title "About Vivian 2"}])}
+                        :on-press #(do (dispatch [:take-delayed-picture])
+                                       (dispatch [:nav/push {:key :about-view-2 :title "About Vivian 2"}]))}
      [text {:style (:pre-show-button-text styles)} "2"     ]]]
 
    [view {:style (:about-row styles)}
     [touchable-opacity {:style (:pre-show-button styles)
-                        :on-press #(dispatch [:nav/push {:key :about-view-3 :title "About Vivian 3"}])}
+                        :on-press #(do (dispatch [:take-delayed-picture])
+                                       (dispatch [:nav/push {:key :about-view-3 :title "About Vivian 3"}]))}
      [text {:style (:pre-show-button-text styles)} "3"     ]]
     [touchable-opacity {:style (:pre-show-button styles)
-                        :on-press #(dispatch [:nav/push {:key :about-view-4 :title "About Vivian 4"}])}
+                        :on-press #(do (dispatch [:take-delayed-picture])
+                                       (dispatch [:nav/push {:key :about-view-4 :title "About Vivian 4"}]))}
      [text {:style (:pre-show-button-text styles)} "4"     ]]]
 
    [view {:style (:about-row styles)}
     [touchable-opacity {:style (:pre-show-button styles)
-                        :on-press #(dispatch [:nav/push {:key :about-view-5 :title "About Vivian 5"}])}
+                        :on-press #(do (dispatch [:take-delayed-picture])
+                                       (dispatch [:nav/push {:key :about-view-5 :title "About Vivian 5"}]))}
      [text {:style (:pre-show-button-text styles)} "5"     ]]
     [touchable-opacity {:style (:pre-show-button styles)
-                        :on-press #(dispatch [:nav/push {:key :about-view-6 :title "About Vivian 6"}])}
+                        :on-press #(do (dispatch [:take-delayed-picture])
+                                       (dispatch [:nav/push {:key :about-view-6 :title "About Vivian 6"}]))}
      [text {:style (:pre-show-button-text styles)} "6"     ]]]])
 
 (defn about []
@@ -285,10 +287,20 @@ At any point before or during the show you may click the icon below to take a ph
             [text {:style (:text styles)} message-content]])]))))
 
 (defn scene-wrapper [child]
-  (let [ssid (subscribe [:ssid])]
+  (let [ssid (subscribe [:ssid])
+        index (subscribe [:nav/index])]
     (fn []
       [view {:style (:container styles)}
        [status-bar {:animated true :hidden true}]
+       (when (pos? @index)
+         [touchable-highlight
+          {:on-press #(dispatch [:nav/pop nil])
+           :style {:margin-left 10
+                   :margin-top 10}}
+          [text {:style {:color "white"
+                         :text-align "left"
+                         :font-family "American Typewriter"}}
+           (str "<-- back")]])
        (when-not (or (= @ssid (:default-ssid config))
                      (contains? (:valid-ssids config) @ssid))
          [view {:style {:background-color "red"

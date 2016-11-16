@@ -141,7 +141,7 @@
      [view {:style (merge (:overlay styles)
                           (:bottom-overlay styles))}
       [touchable-opacity {:style (:capture-button styles)
-                          :on-press #(dispatch [:take-picture])}
+                          :on-press #(dispatch [:take-picture {:target :camera-roll}])}
        [image {:source capture-image}]]]]))
 
 (defn about-view-picture [key]
