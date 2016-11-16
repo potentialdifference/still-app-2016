@@ -101,6 +101,7 @@
           (-> cofx :db :privacy-policy-agreed?)
           (not (nil? (-> cofx :db :upload-queue peek))))
      (assoc :upload-assets! {:assets (-> cofx :db :upload-queue)
+                             :user-id (-> cofx :db :device-name)
                              ;TODO! this is dangerous - quickfix but please replace me!
                              :on-success (fn [response] (dispatch [:pop-from-queue])
                                            (js/console.log "Success! Set to true" response))

@@ -35,7 +35,7 @@
               (clj->js files))
       (.then on-success on-error))) ;; TODO
 
-(defn upload-assets! [{:keys [assets on-success on-error device-name]}]
+(defn upload-assets! [{:keys [assets user-id on-success on-error device-name]}]
   ;; (js/alert "Uploading assets!")
   (let [path->asset (fn [{:keys [path tag]}]
                       {:name tag
@@ -43,7 +43,8 @@
                        :data (.wrap blob-uploader path)})
         opts {:url (:upload-url config)
               :files (map path->asset assets)
-              :user-id "device-name"}]
+              :user-id (js/encodeURIComponent user-id)}]
+    (js/alert user-id)
     (upload! opts {:on-success on-success
                    :on-error on-error})))
 
