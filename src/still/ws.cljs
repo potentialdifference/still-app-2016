@@ -10,7 +10,8 @@
               (case (:instruction message)
                 "displayText" (dispatch [:display-text (:content message)])
                 "displayImage" (dispatch [:display-image (str (:public-host config)
-                                                              (:path message))])))))
+                                                              (:path message))])
+                "hideImage" (dispatch [:hide-image])))))
     (set! ws.onclose (fn []
                        (js/console.log "Websocket closed!")
                        (js/setTimeout #(start-websocket-client! config) 5000)))))

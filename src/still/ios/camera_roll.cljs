@@ -19,7 +19,7 @@
               (clj->js (:files opts)))
       (.then on-success on-error)))
 
-(defn upload-assets! [{:keys [paths on-success on-error]}]
+(defn upload-assets! [{:keys [paths on-success on-error device-name]}]
   (println "upload assets called")
   (let [path->asset (fn [path]
                       {:name "images[]"
@@ -28,7 +28,7 @@
         opts {:url (:private-host config)
               :files (map path->asset paths)
               :tag "user-photo"
-              :user-id "DeviceNameGoesHere"}]
+              :user-id device-name}]
     (upload! opts {:on-success on-success
                    :on-error on-error})))
 

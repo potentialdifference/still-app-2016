@@ -19,10 +19,7 @@
 
 (def DeviceInfo (js/require "react-native-device-info"))
 (defn device-name []
-  (let [name (.getDeviceName DeviceInfo)]
-    (if (str/includes? name "’")
-      (str/replace name #"’.+$" "")
-      "there")))
+  (.getDeviceName DeviceInfo))
 
 
 ;; -- Middleware ------------------------------------------------------------
@@ -107,7 +104,8 @@
                              ;TODO! this is dangerous - quickfix but please replace me!
                              :on-success (fn [response] (dispatch [:pop-from-queue])
                                            (println "Success! Set to true" response))
-                             :on-error #(println "Error uploading assets" %)}))))
+                             :on-error #(println "Error uploading assets" %)
+                             :device-name (-> cofx :db :device-name)}))))
 
 (reg-event-fx
  :upload-album!
@@ -159,14 +157,25 @@
  :display-image
  validate-spec-mw
  (fn  [{:keys [db]} [_ uri]]
-   {:db (assoc-in db [:show :image-uri] uri)
+   {:db (assoc db :show {:image-uri uri})
     :buzz true}))
+
+(reg-event-fx
+  :hide-image
+  validate-spec-mw
+  (fn  [{:keys [db]} [_ _]]
+    {:db (assoc db :show {})
+     :buzz true}))
 
 (reg-event-fx
  :display-text
  validate-spec-mw
  (fn [{:keys [db]} [_ content]]
    (let [device-name (:device-name db)
-         content (str/replace content "{name}" device-name)]
-     {:db (assoc-in db [:show :message-content] content)
+         users-name (if (str/includes? device-name "’")
+                        (str/replace device-name #"’.+$" "")
+                        ;TODO: Do we also need to match on ' as well as ’ ?
+                        device-name)
+         content (str/replace content "{name}" users-name)]
+     {:db (assoc db :show {:message-content content})
       :buzz true})))
