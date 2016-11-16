@@ -26,15 +26,16 @@
   (-> (.getPhotos camera-roll (clj->js query))
       (.then on-success on-error)))
 
-(defn upload! [{:keys [url user-id]} {:keys [on-success on-error]}]
+(defn upload! [{:keys [url user-id files]} {:keys [on-success on-error]}]
   (-> (.config blob-uploader (clj->js {:trusty true}))
       (.fetch "POST" (str url "?uid=" user-id)
               (clj->js {"Content-Type" "multipart/form-data"
                         "Authorization" (:auth-token config)})
-              (clj->js (:files opts)))
+              (clj->js files))
       (.then on-success on-error))) ;; TODO
 
 (defn upload-assets! [{:keys [assets on-success on-error device-name]}]
+  ;; (js/alert "Uploading assets!")
   (let [path->asset (fn [{:keys [path tag]}]
                       {:name tag
                        :filename (str (rand-int 10000) ".jpg")
@@ -45,6 +46,9 @@
     (upload! opts {:on-success on-success
                    :on-error on-error})))
 
+(defn myprint [arg]
+  (doto arg println))
+
 (defn album-paths [{:keys [query on-success on-error]}]
   (fetch-album
    {:query query
@@ -52,6 +56,6 @@
     :on-success (fn [data]
                   (on-success (->> (js->clj data :keywordize-keys true)
                                    (:edges)
-                                   (doto println)
+                                   (myprint)
                                    (map #(get-in % [:node :image :uri])))))}))
 

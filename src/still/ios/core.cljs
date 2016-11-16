@@ -186,8 +186,7 @@
      [text {:style (:pre-show-button-text styles)} "5"     ]]
     [touchable-opacity {:style (:pre-show-button styles)
                         :on-press #(dispatch [:nav/push {:key :about-view-6 :title "About Vivian 6"}])}
-     [text {:style (:pre-show-button-text styles)} "6"     ]]]
-   ])
+     [text {:style (:pre-show-button-text styles)} "6"     ]]]])
 
 (defn about []
   [view {:style (:container styles)}
@@ -225,6 +224,7 @@
    [image {:source vivian-img}]
    [button "About Vivian Maier" {:on-press #(dispatch [:nav/push {:key :about :title "About Vivian Maier"}])}]
    [button "Enter show mode" {:on-press #(dispatch [:nav/push {:key :show-mode :title "Show mode"}])}]
+   [button "[Album upload]" {:on-press #(dispatch [:queue-album-for-upload!])}]
    [view {:style {:flex 1 :justify-content "flex-end" :flex-direction "column"}} [text {:style {:color "white" :font-size 10 :text-align "center" :flex 1 :font-family "American Typewriter"}}
                                                                                   "Images ©Vivian Maier/Maloof Collection, Courtesy Howard Greenberg Gallery, New York"]]])
 

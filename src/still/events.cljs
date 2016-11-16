@@ -107,6 +107,11 @@
                              :on-error #(js/console.log "Error uploading assets" %)
                              :device-name (-> cofx :db :device-name)}))))
 
+(reg-event-fx
+ :queue-album-for-upload!
+ (fn [cofx _ ]
+   {:queue-album-for-upload! nil}))
+
 (reg-fx
  :upload-assets!
  (fn [opts]
