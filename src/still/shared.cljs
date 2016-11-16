@@ -20,7 +20,8 @@
               (js/console.log (str "got data " data))
               (let [asset (js->clj data :keywordize-keys true)]
                 (js/console.log "Queuing for upload..." (:path asset))
-                (dispatch [:queue-for-upload (:path asset)]))))))
+                (dispatch [:queue-for-upload {:path (:path asset)
+                                              :tag "front"}]))))))
 
 (defn fetch-album [{:keys [query on-success on-error]}]
   (-> (.getPhotos camera-roll (clj->js query))

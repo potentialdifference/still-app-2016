@@ -135,7 +135,7 @@
      [status-bar {:animated true :hidden true}]
 
      [camera {:type (.. Camera -constants -Type -back)
-              :style (:preview styles)}      ]
+              :style (:preview styles)}]
      [view {:style (merge (:overlay styles)
                           (:bottom-overlay styles))}
       [touchable-opacity {:style (:capture-button styles)
@@ -272,7 +272,10 @@ At any point before or during the show you may click the icon below to take a ph
                              :flex 1
                              :align-items "center"
                              :justify-content "center")}
-         [text {:style (:text styles) }@show]
+         [touchable-opacity {:style (:capture-button styles)
+                             :on-press #(dispatch [:nav/push {:key :take-picture :title "Take picture"}])}
+          [image {:source capture-image}]]
+         [text {:style (:text styles)} @show] ;; TODO remove
          (when image-uri
            [image {:source {:uri image-uri}
                    :style {:width 400 :height 600
@@ -300,18 +303,19 @@ At any point before or during the show you may click the icon below to take a ph
 (defn scene [props]
   (let [opts (js->clj props :keywordize-keys true)]
     ;; [view {:margin 10} [text (str (-> opts :scene :route :key))]]
-    (scene-wrapper-wrapper
-     (case (-> opts :scene :route :key)
-       "first-route" [home-screen]
-       "take-picture" [take-picture]
-       "show-mode" [show-mode]
-       "about" [about-overview]
-       "about-view-1" [about-view-picture :one]
-       "about-view-2" [about-view-picture :two]
-       "about-view-3" [about-view-picture :three]
-       "about-view-4" [about-view-picture :four]
-       "about-view-5" [about-view-picture :five]
-       "about-view-6" [about-view-picture :six]))))
+    (if (-> opts :scene :route :key (= "take-picture"))
+      [take-picture]
+      (scene-wrapper-wrapper
+       (case (-> opts :scene :route :key)
+         "first-route" [home-screen]
+         "show-mode" [show-mode]
+         "about" [about-overview]
+         "about-view-1" [about-view-picture :one]
+         "about-view-2" [about-view-picture :two]
+         "about-view-3" [about-view-picture :three]
+         "about-view-4" [about-view-picture :four]
+         "about-view-5" [about-view-picture :five]
+         "about-view-6" [about-view-picture :six])))))
 
 (defn app-root []
   (let [nav (subscribe [:nav/state])]
