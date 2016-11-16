@@ -236,7 +236,6 @@
         [privacy-policy-view]))))
 
 (defn nav-title [props]
-    (.log js/console "props" props)
     [header-title
      (aget props "scene" "route" "title")])
 

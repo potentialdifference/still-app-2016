@@ -5,6 +5,7 @@
             [still.android.events]
             [still.subs]
             [still.about :as about]
+            [still.ws :refer [start-websocket-client!]]
             [still.config :refer [config]]))
 
 (def lorem
@@ -23,6 +24,7 @@
 (def header-title (r/adapt-react-class (.-Title (.-Header (.-NavigationExperimental ReactNative)))))
 
 (def capture-image (js/require "./images/ic_photo_camera_36pt.png"))
+
 (defn dimensions [from]
   (-> (.-Dimensions ReactNative)
       (.get from)
@@ -34,7 +36,10 @@
                           :left     0
                           :bottom   0
                           :right    0}
-   :container            {:flex 1 :padding 40 :align-items "center" :background-color "black" :position "relative"}
+   :container            {:flex 1
+                          :align-items "center"
+                          :background-color "black"
+                          :position "relative"}
    :container-no-padding {:flex 1 :background-color "black" :padding 0 :justify-content "space-around"}
    :about-container      {:flex 1 :justify-content "center" :background-color "black"}
    :about-row            {:flex 1 :flex-direction "row" :justify-content "center" :align-items "center"}
@@ -77,6 +82,19 @@
    :text                 {:font-family "American Typewriter"
                           :color "white"
                           :text-align "center"}
+   :header-text          {:font-size 30
+                          :font-weight "100"
+                          :margin-bottom 20
+                          :text-align "center"
+                          :color "white"
+                          :font-family "American Typewriter"}
+   :text-message-box     {:flex 1
+                          :border-radius 10
+                          :padding 20
+                          :position "relative"
+                          :top 200
+                          :width 300
+                          :background-color "green"}
    :show-mode-text       {:font-size 24
                           :line-height 40
                           :text-align "justify"
@@ -89,6 +107,7 @@
 (def status-bar (r/adapt-react-class (.-StatusBar ReactNative)))
 (def text (r/adapt-react-class (.-Text ReactNative)))
 (def view (r/adapt-react-class (.-View ReactNative)))
+(def Image (.-Image ReactNative))
 (def image (r/adapt-react-class (.-Image ReactNative)))
 (def touchable-highlight (r/adapt-react-class (.-TouchableHighlight ReactNative)))
 (def touchable-opacity (r/adapt-react-class (.-TouchableOpacity ReactNative)))
@@ -105,8 +124,10 @@
     {:component-did-mount
      (fn [this]
        (dispatch [:take-delayed-picture]))}))
+
 (defn alert [title]
   (.alert (.-Alert ReactNative) title))
+
 
 (defn take-picture []
   (fn []
@@ -134,10 +155,7 @@
     [image {:source (key about/images) :style (:pre-show-image styles)}]]
    [text {:style {:padding          10 :font-size 16
                  :background-color "black" :color "white" :font-family "American Typewriter"}}
-    (key about/captions)  ]
-
-
-   ])
+    (key about/captions)  ] ])
 
 (defn about-overview []
 
@@ -202,12 +220,10 @@
 
 (defn home-view []
   [view
-   [text {:style {:font-size 30 :font-weight "100" :margin-bottom 20 :text-align "center" :color "white" :font-family "American Typewriter"}} "Still"]
+   [text {:style (:header-text styles)} "Still"]
    [image {:source vivian-img}]
    [button "About Vivian Maier" {:on-press #(dispatch [:nav/push {:key :about :title "About Vivian Maier"}])}]
-   [button "Take a picture" {:on-press #(dispatch [:nav/push {:key :take-picture :title "Take picture"  :font-family "American Typewriter"}])}]
    [button "Enter show mode" {:on-press #(dispatch [:nav/push {:key :show-mode :title "Show mode"}])}]
-   [button "Test fetching images" {:on-press #(dispatch [:upload-album! (constantly true)])}]
    [view {:style {:flex 1 :justify-content "flex-end" :flex-direction "column"}} [text {:style {:color "white" :font-size 10 :text-align "center" :flex 1 :font-family "American Typewriter"}}
                                                                                   "Images ©Vivian Maier/Maloof Collection, Courtesy Howard Greenberg Gallery, New York"]]])
 
@@ -222,7 +238,6 @@
 
 
 (defn nav-title [props]
-  (.log js/console "props" props)
   [header-title
    (aget props "scene" "route" "title")])
 
@@ -242,11 +257,30 @@
         :style {:background-color "white" :border-bottom-color "white"})]]))
 
 
+(def preshow-blurb
+  [text {:style (:text styles)}
+   "Your device is now in 'show mode'.
+
+Further instructions will be given to you at the beginning of the performance.
+
+At any point before or during the show you may click the icon below to take a photo. Why not practice now, whilst you're waiting?"])
+
 (defn show-mode []
-  [view {:style (:container styles)}
-   #_[image {:source {:uri "http://10.0.1.2:8080/public/test1.jpg"}
-             :style {:width 400 :height 400}}]
-   [text {:style (:show-mode-text styles)} "Show mode"]])
+  (let [show (subscribe [:show])]
+    (fn []
+      (let [{:keys [image-uri message-content]} @show]
+        [view {:style (assoc (:container styles)
+                        :flex 1
+                        :align-items "center"
+                        :justify-content "center")}
+         [text {:style (:text styles) }@show]
+         (when image-uri
+           [image {:source {:uri image-uri}
+                   :style {:width 400 :height 600
+                           :resizeMode (.. Image -resizeMode -contain)}}])
+         (when message-content
+           [view {:style (:text-message-box styles)}
+            [text {:style (:text styles)} message-content]])]))))
 
 (defn scene [props]
   (let [opts (js->clj props :keywordize-keys true)]
@@ -277,4 +311,6 @@
 (defn init []
   (dispatch-sync [:initialize-db {:key :first-route
                                   :title "Home"}])
+  (start-websocket-client! config)
+  (dispatch [:initial-events])
   (.registerComponent app-registry "Still" #(r/reactify-component app-root)))

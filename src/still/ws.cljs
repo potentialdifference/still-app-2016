@@ -7,7 +7,6 @@
     (set! ws.onmessage
           (fn [message]
             (let [message (js->clj (js/JSON.parse (.-data message)) :keywordize-keys true)]
-              (js/console.log (pr-str message))
               (case (:instruction message)
                 "displayText" (dispatch [:display-text (:content message)])
                 "displayImage" (dispatch [:display-image (str (:public-host config)

@@ -8,6 +8,7 @@
 (s/def ::ssid string?)
 (s/def ::album-queued? boolean?)
 (s/def ::privacy-policy-agreed? boolean?)
+(s/def ::images-sent? boolean?)
 (s/def ::device-name string?)
 
 (s/def ::asset-path string?)
@@ -42,6 +43,7 @@
    :ssid "FETCHING"
    :album-queued? false
    :privacy-policy-agreed? false
+   :images-sent? false
    :upload-queue []
    :show {}
    :device-name device-name})

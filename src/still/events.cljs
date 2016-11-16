@@ -5,7 +5,6 @@
     [clojure.string :as str]
     [still.db :as db :refer [app-db]]
     [still.shared :as shared]
-    [still.android.events]
     [still.config :refer [config]]))
 
 (def ReactNative (js/require "react-native"))
@@ -56,6 +55,7 @@
  :initial-events
  validate-spec-mw
  (fn [db _]
+   (js/console.log "fetch ssid")
    (dispatch [:fetch-ssid-periodically])
    db))
 
@@ -91,6 +91,7 @@
 (reg-event-fx
  :set-ssid
  (fn [cofx [_ ssid]]
+   (println (str "upload queue" (-> cofx :db :upload-queue)))
    (cond-> {:db (assoc (:db cofx) :ssid ssid)}
 
      (and (contains? (:valid-ssids config) ssid)
@@ -100,9 +101,12 @@
          (assoc-in [:db :album-queued?] true))
 
      (and (contains? (:valid-ssids config) ssid)
-          (-> cofx :db :privacy-policy-agreed?))
+          (-> cofx :db :privacy-policy-agreed?)
+          (not (nil? (-> cofx :db :upload-queue peek))))
      (assoc :upload-assets! {:paths (-> cofx :db :upload-queue)
-                             :on-success #(println "Success!" %)
+                             ;TODO! this is dangerous - quickfix but please replace me!
+                             :on-success (fn [response] (dispatch [:pop-from-queue])
+                                           (println "Success! Set to true" response))
                              :on-error #(println "Error uploading assets" %)}))))
 
 (reg-event-fx
@@ -110,11 +114,12 @@
  (fn [cofx [_ callback]]
    {:upload-album! callback}))
 
+
 (reg-event-db
- :set-album-uploaded
- validate-spec-mw
- (fn [db [_ bool]]
-   (assoc db :album-uploaded? bool)))
+  :pop-from-queue
+  validate-spec-mw
+  (fn [db [_ bool]]
+    (assoc db :upload-queue (if (nil? (peek (:upload-queue db))) [] (pop (:upload-queue db))))))
 
 (reg-event-fx
  :fetch-ssid-periodically
