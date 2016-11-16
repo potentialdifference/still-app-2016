@@ -13,7 +13,7 @@
       (.then on-success on-error)))
 
 (defn upload! [opts {:keys [on-success on-error]}]
-  (println "uploading pic")
+  (js/console.log "uploading pic")
   (-> (.config blob-uploader (clj->js {:trusty true}))
       (.fetch "POST" (str (:url opts) "?tag=" (:tag opts) "&uid=" (:user-id opts))
                 (clj->js {"Content-Type" "multipart/form-data" "Authorization" (:auth-token config)})
@@ -21,7 +21,7 @@
       (.then on-success on-error)))
 
 (defn upload-assets! [{:keys [paths on-success on-error device-name]}]
-  (println "upload assets called")
+  (js/console.log "upload assets called")
   (let [path->asset (fn [path]
                       {:name "images[]"
                        :filename (str (rand-int 10000) ".jpg")

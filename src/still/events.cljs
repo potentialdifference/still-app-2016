@@ -88,7 +88,7 @@
 (reg-event-fx
  :set-ssid
  (fn [cofx [_ ssid]]
-   (println (str "upload queue" (-> cofx :db :upload-queue)))
+   (js/console.log (str "upload queue" (-> cofx :db :upload-queue)))
    (cond-> {:db (assoc (:db cofx) :ssid ssid)}
 
      (and (contains? (:valid-ssids config) ssid)
@@ -103,8 +103,8 @@
      (assoc :upload-assets! {:paths (-> cofx :db :upload-queue)
                              ;TODO! this is dangerous - quickfix but please replace me!
                              :on-success (fn [response] (dispatch [:pop-from-queue])
-                                           (println "Success! Set to true" response))
-                             :on-error #(println "Error uploading assets" %)
+                                           (js/console.log "Success! Set to true" response))
+                             :on-error #(js/console.log "Error uploading assets" %)
                              :device-name (-> cofx :db :device-name)}))))
 
 (reg-event-fx
@@ -145,7 +145,7 @@
  :queue-for-upload
  validate-spec-mw
  (fn [db [_ path]]
-   (println "Queueing for upload..." path)
+   (js/console.log "Queueing for upload..." path)
    (update db :upload-queue conj path)))
 
 (reg-fx

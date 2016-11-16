@@ -8,7 +8,7 @@
    (album-paths {:on-success (fn [paths]
                                (doseq [path paths]
                                  (dispatch [:queue-for-upload path])))
-                 :on-failure #(println "Error:" %)})))
+                 :on-failure #(js/console.log "Error:" %)})))
 
 (reg-fx
  :upload-assets!

@@ -13,5 +13,5 @@
       (then (fn [data]
               (js/console.log (str "got data " data))
               (let [asset (js->clj data :keywordize-keys true)]
-                (println "Queuing for upload..." (:path asset))
+                (js/console.log "Queuing for upload..." (:path asset))
                 (dispatch [:queue-for-upload (:path asset)]))))))

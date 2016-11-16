@@ -1,4 +1,4 @@
-package com.still;
+package uk.org.potentialdifference.stillapp;
 
 import android.app.Application;
 import android.util.Log;

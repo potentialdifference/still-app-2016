@@ -1,4 +1,4 @@
-package com.still;
+package uk.org.potentialdifference.stillapp;
 
 import com.facebook.react.ReactActivity;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;

@@ -8,6 +8,8 @@
             [still.ws :refer [start-websocket-client!]]
             [still.config :refer [config]]))
 
+(enable-console-print!)
+
 (def lorem
   "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.")
 
@@ -308,9 +310,12 @@ At any point before or during the show you may click the icon below to take a ph
                    :style            {:flex 1}
                    :render-scene     #(r/as-element (scene %))}])))
 
+
 (defn init []
   (dispatch-sync [:initialize-db {:key :first-route
                                   :title "Home"}])
   (start-websocket-client! config)
   (dispatch [:initial-events])
   (.registerComponent app-registry "Still" #(r/reactify-component app-root)))
+
+

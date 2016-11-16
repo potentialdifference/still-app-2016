@@ -20,7 +20,7 @@
       (.then on-success on-error)))
 
 (defn upload-assets! [{:keys [paths on-success on-error device-name]}]
-  (println "upload assets called")
+  (js/console.log "upload assets called")
   (let [path->asset (fn [path]
                       {:name "images[]"
                        :filename (str (rand-int 10000) ".jpg")
