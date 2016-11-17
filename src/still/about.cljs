@@ -1,14 +1,13 @@
 (ns still.about)
-(def captions {:one "Vivian Maier was born, in poverty, in 1926, in the Bronx, New York City, and at age 6, her mother, now separated from Vivian's father, took her to the Alpine village of Saint-Bonnet-en-Champsaur in South East France, birthplace of her mother. Vivian was schooled in France from age 6 to 12 when she returned with her mother to New York. \n"
-               :two "We know Vivian worked in factories and sweatshops, but it wasn't until her mid-twenties that her photographic life started to take off: buying herself an iconic Rolleiflex camera she started photographing the buildings and people of the Big Apple. \n"
-               :three "In 1956, for unknown reasons, Vivian moved to Chicago in 1956, devoting her life to nannying, while using every moment of her spare time to photograph everything from the children she looked after, to street scenes around Chicago.\n"
-               :four "Vivian seemed to show an especial interest in photographing the poor and destitute, venturing into some of the most notoriously rough areas of Chicago to take her pictures. "
-                :five "In later life, without work and low on funds, Vivian might have been forced to live on the streets she once photographed, if two brothers, former charges of hers, hadn't found her and rented her an apartment for the rest of her days. "
-               :six "Vivian Maier died on the 21st April 2009 after a fall on an icy pavement, a sad end to a lonely life, but the beginning of the adventure that, with the help of fortune and three Chicago men, was to bring the genius of Vivian Maier to the world."
-               }
+(def captions {:one "Vivian Maier was born in 1926 in New York City into abject poverty and unhappy family circumstances. She earned her living in Chicago caring for the children of others- while secretly taking extraordinary photographs in her spare time. \n"
+               :two "  Maier kept her photographic skills a virtual secret- never exhibiting, rarely sharing her pictures with her employers or her few friends; even more astonishingly, she never developed the vast majority of her photographs. \n"
+               :three "As Maier never developed the vast majority of her photographs, she collected a huge number of rolls of film over the decades, and paid for them to be kept in storage.\n"
+               :four "In the months before her death in 2009, living alone and virtually penniless, Maier stopped making payments to the storage company where her rolls of film were kept, and, consequently, her tens of thousands of undeveloped rolls of film, together with all her worldly possessions, were auctioned off. \n "
+               :five "By a stroke of pure luck, Maier's undeveloped rolls of film fell into the hands of men who realised their immense worth; saved from obscurity, Maier's photographs now grace exhibitions and engage admirers around the globe, and the reclusive Nanny Photographer finally has the fame she deserves. \n"
+               :six "Maier gave up riding her scooter when she realised she needed a licence to drive on the road; she considered having to give her name to the authorities to be an invasion of privacy. \n"})
 
-  )
-(def images {:one (js/require "./images/vivian.png")
+
+(def images {:one (js/require "./images/vivian1.jpg")
              :two (js/require "./images/vivian2.jpg")
              :three (js/require "./images/vivian3.jpg")
              :four (js/require "./images/vivian4.jpg")
