@@ -15,8 +15,8 @@
 (def Camera (js/require "react-native-camera"))
 
 
-(def KeepAwake (js/require "react-native-keep-awake"))
-(def keep-awake (.-default KeepAwake))
+(def KeepAwake (.-default (js/require "react-native-keep-awake")))
+(def keep-awake (r/adapt-react-class KeepAwake))
 
 (def card-stack (r/adapt-react-class (.-CardStack (.-NavigationExperimental ReactNative))))
 (def navigation-header-comp (.-Header (.-NavigationExperimental ReactNative)))
@@ -278,6 +278,7 @@ At any point before or during the show you may click the icon below to take a ph
                              :on-press #(dispatch [:nav/push {:key :take-picture :title "Take picture"}])}
           [image {:source capture-image}]]
          [text {:style (:text styles)} @show] ;; TODO remove
+         [keep-awake] ;; Ensure screen doesn't sleep
          (when image-uri
            [image {:source {:uri image-uri}
                    :style {:width 400 :height 600
