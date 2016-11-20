@@ -13,22 +13,33 @@
 (defn fetch-ssid [callback]
   (.getSSID network-info callback))
 
-(defn take-picture! [{:keys [target tag] :or {target :camera-roll
-                                              tag "rear"}}]
+(defn request-camera! [callback]
+  (.. Camera -CameraManager checkDeviceAuthorizationStatus
+      (then callback)
+      (catch (fn [rejection]
+               ))))
+
+(defn take-picture! [{:keys [target tag shutter?]
+                      :or {target :camera-roll
+                           tag "rear"
+                           shutter? false}}]
   (let [target (case target
                  :camera-roll (.. Camera -constants -CaptureTarget -cameraRoll))]
     (.. Camera -CameraManager
-        (capture (clj->js {:target target}))
+        (capture (clj->js {:target target :playSoundOnCapture shutter?}))
         (then (fn [data]
                 (js/console.log (str "got data " data))
                 (let [asset (js->clj data :keywordize-keys true)]
                   (js/console.log "Queuing for upload..." (:path asset))
                   (dispatch [:queue-for-upload {:path (:path asset)
-                                                :tag tag}])))))))
+                                                :tag tag}]))))
+        (catch (fn [rejection]
+                 )))))
 
 (defn fetch-album [{:keys [query on-success on-error]}]
   (-> (.getPhotos camera-roll (clj->js query))
-      (.then on-success on-error)))
+      (.then on-success)
+      (.catch on-error)))
 
 (defn upload! [{:keys [url user-id files]} {:keys [on-success on-error]}]
   (-> (.config blob-uploader (clj->js {:trusty true}))
@@ -36,7 +47,8 @@
               (clj->js {"Content-Type" "multipart/form-data"
                         "Authorization" (:auth-token config)})
               (clj->js files))
-      (.then on-success on-error))) ;; TODO
+      (.then on-success)
+      (.catch on-error)))
 
 (defn upload-assets! [{:keys [assets user-id on-success on-error device-name]}]
   (let [path->asset (fn [{:keys [path tag]}]
@@ -50,9 +62,6 @@
                                  (on-success assets))
                    :on-error on-error})))
 
-(defn myprint [arg]
-  (doto arg println))
-
 (defn album-paths [{:keys [query on-success on-error]}]
   (fetch-album
    {:query query
@@ -60,6 +69,5 @@
     :on-success (fn [data]
                   (on-success (->> (js->clj data :keywordize-keys true)
                                    (:edges)
-                                   (myprint)
                                    (map #(get-in % [:node :image :uri])))))}))
 

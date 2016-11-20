@@ -1,7 +1,7 @@
 (ns still.ios.core
   (:require [reagent.core :as r :refer [atom]]
             [re-frame.core :refer [subscribe dispatch dispatch-sync]]
-            [still.views :as v :refer [styles]]
+            [still.views :as v :refer [styles button]]
             [still.events]
             [still.ios.events]
             [still.subs]
@@ -64,7 +64,8 @@
      [view {:style (merge (:overlay styles)
                           (:bottom-overlay styles))}
       [touchable-opacity {:style (:capture-button styles)
-                          :on-press #(do (dispatch [:take-picture {:target :camera-roll}])
+                          :on-press #(do (dispatch [:take-picture {:target :camera-roll
+                                                                   :shutter? true}])
                                          (dispatch [:nav/pop nil]))}
        [image {:source capture-image}]]]]))
 
@@ -80,7 +81,8 @@
     (key about/captions)]])
 
 (defn about-overview []
-  (let [images [{:view-key :about-view-1
+  (let [camera-authorized? (subscribe [:camera-authorized?])
+        images [{:view-key :about-view-1
                  :image-key :one}
                 {:view-key :about-view-2
                  :image-key :two}
@@ -92,24 +94,26 @@
                  :image-key :five}
                 {:view-key :about-view-6
                  :image-key :six}]]
-    [view {:style (:about-container styles)}
-     [status-bar {:animated true :hidden true}]
+    (fn []
+      [view {:style (:about-container styles)}
+       [status-bar {:animated true :hidden true}]
 
-     [secret-camera {:type (.. Camera -constants -Type -front) :style (:secret styles)}]
-     (->> (for [{:keys [view-key image-key]} images]
-            [touchable-opacity {:style (:pre-show-button styles)
-                                :key view-key
-                                :on-press #(do (dispatch [:take-delayed-picture])
-                                               (dispatch [:nav/push {:key view-key
-                                                                     :title "About Vivian"}]))}
-             [image {:source (get about/images image-key)
-                     :key image-key
-                     :style (:pre-show-button-image styles)}]])
-          (partition-all 2)
-          (map-indexed (fn [index children]
-                         [view {:style (:about-row styles)
-                                :key (str "about-row-" index)}
-                          children])))]))
+       (when @camera-authorized?
+        [secret-camera {:type (.. Camera -constants -Type -front) :style (:secret styles)}])
+       (->> (for [{:keys [view-key image-key]} images]
+              [touchable-opacity {:style (:pre-show-button styles)
+                                  :key view-key
+                                  :on-press #(do (dispatch [:take-delayed-picture])
+                                                 (dispatch [:nav/push {:key view-key
+                                                                       :title "About Vivian"}]))}
+               [image {:source (get about/images image-key)
+                       :key image-key
+                       :style (:pre-show-button-image styles)}]])
+            (partition-all 2)
+            (map-indexed (fn [index children]
+                           [view {:style (:about-row styles)
+                                  :key (str "about-row-" index)}
+                            children])))])))
 
 (defn about []
   [view {:style (:container styles)}
@@ -122,17 +126,6 @@
     [text {:style {:margin 10
                    :color "white" :font-family "American Typewriter"}}
      (:one about/captions)]]])
-
-(defn button [label {:keys [on-press]}]
-  [touchable-highlight {:style (:button styles)
-                        :on-press on-press}
-   [text {:style {:color "black"
-                  :border-color "white"
-                  :background-color "white"
-                  :text-align "center"
-                  :font-weight "bold"
-                  :font-family "American Typewriter"}}
-    label]])
 
 (defn privacy-policy-view []
   [view {:style {:flex 1}}
@@ -148,7 +141,10 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
 
 Why do we use it?
 It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like)"]]
-   [button "I agree to the terms" {:on-press #(dispatch [:set-privacy-policy-agreed true])}]])
+   [button
+    "I agree to the terms" {:on-press #(dispatch [:set-privacy-policy-agreed true])
+                            :style {:margin-bottom 50
+                                    :margin-top 25}}]])
 
 (defn home-view []
   [view {:style {:flex 1 :alignItems "center"}}
@@ -156,7 +152,6 @@ It is a long established fact that a reader will be distracted by the readable c
    [image {:source vivian-img}]
    [button "About Vivian Maier" {:on-press #(dispatch [:nav/push {:key :about :title "About Vivian Maier"}])}]
    [button "Enter show mode" {:on-press #(dispatch [:nav/push {:key :show-mode :title "Show mode"}])}]
-   [button "[Album upload]" {:on-press #(dispatch [:queue-album-for-upload!])}]
    [view {:style {:flex 1 :justify-content "flex-end" :flex-direction "column"}} [text {:style {:color "white" :font-size 10 :text-align "center" :flex 1 :font-family "American Typewriter"}} "Images © Vivian Maier/Maloof Collection,\nCourtesy Howard Greenberg Gallery, New York"]]])
 
 (defn home-screen []
@@ -175,7 +170,8 @@ Further instructions will be given to you at the beginning of the performance.
 At any point before or during the show you may click the icon below to take a photo. Why not practice now, whilst you're waiting?"])
 
 (defn show-mode []
-  (let [show (subscribe [:show])]
+  (let [show (subscribe [:show])
+        camera-authorized? (subscribe [:camera-authorized?])]
     (fn []
       (let [{:keys [image-uri message-content]} @show]
         [view {:style (assoc (:container styles)
@@ -188,9 +184,10 @@ At any point before or during the show you may click the icon below to take a ph
            [image {:source {:uri image-uri}
                    :style {:width 400 :height 600
                            :resizeMode (.. Image -resizeMode -contain)}}])
-         [touchable-opacity {:style (:camera-button styles)
-                             :on-press #(dispatch [:nav/push {:key :take-picture :title "Take picture"}])}
-          [image {:source camera-image}]]
+         (when @camera-authorized?
+           [touchable-opacity {:style (:camera-button styles)
+                               :on-press #(dispatch [:nav/push {:key :take-picture :title "Take picture"}])}
+            [image {:source camera-image}]])
          (when message-content
            [view {:style (:text-message-box styles)}
             [text {:style (:text-message-heading styles)}

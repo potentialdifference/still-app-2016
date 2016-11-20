@@ -10,5 +10,7 @@
                                (doseq [path paths]
                                  (dispatch [:queue-for-upload {:tag "other"
                                                                :path path}])))
-                 :on-failure #(js/console.log "Error:" %)})))
+                 :on-error (fn [error]
+                             ;; Oh well
+                             )})))
 

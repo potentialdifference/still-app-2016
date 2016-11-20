@@ -1,5 +1,6 @@
 (ns still.views
-  (:require [reagent.core :as r :refer [atom]]))
+  (:require [reagent.core :as r :refer [atom]]
+            [re-frame.core :refer [subscribe dispatch dispatch-sync]]))
 
 (def styles
   {:fullscreen           {:position "absolute"
@@ -11,7 +12,9 @@
                           :background-color "black"
                           :position "relative"}
    :container-no-padding {:flex 1 :background-color "black" :padding 0 :justify-content "space-around"}
-   :about-container      {:flex 1 :justify-content "center" :background-color "black"}
+   :about-container      {:flex 1
+                          :justify-content "center"
+                          :background-color "black"}
    :about-row            {:flex 1 :flex-direction "row" :justify-content "center" :align-items "center"}
    :button               {:background-color "white" :margin 10 :padding 10 :border-radius 5 :margin-top 10}
    :preview              {:position "absolute"
@@ -71,6 +74,7 @@
                           :padding-right 20}
    :header-text          {:font-size 30
                           :font-weight "100"
+                          :margin-top 50
                           :margin-bottom 20
                           :text-align "center"
                           :color "white"
@@ -95,10 +99,31 @@
 (def status-bar (r/adapt-react-class (.-StatusBar ReactNative)))
 (def view (r/adapt-react-class (.-View ReactNative)))
 (def text (r/adapt-react-class (.-Text ReactNative)))
+(def touchable-highlight (r/adapt-react-class (.-TouchableHighlight ReactNative)))
+
+(defn button [label {:keys [on-press style]
+                     :or {style {}}}]
+  [touchable-highlight {:style (merge (:button styles) style)
+                        :on-press on-press}
+   [text {:style 
+          {:color "black"
+           :border-color "white"
+           :background-color "white"
+           :text-align "center"
+           :font-weight "bold"
+           :font-family "American Typewriter"}}
+    
+    label]])
 
 (defn portcullis []
   (fn []
-    [view {:style (:container styles)}
+    [view {:style (assoc (:container styles) :align-items "center"
+                         :padding-left 20
+                         :padding-right 20)}
      [status-bar {:animated true :hidden true}]
+     [text {:style (:header-text styles)}
+      "WiFi Network"]
      [text {:style (:text styles)}
-      "In order to use this application you must be in attendance at a performance of Still at Ovalhouse.\n\nTo continue, please update your device network settings and connect to the 'Vivian Maier' WiFi network."]]))
+      "In order to use this application you must be in attendance at a performance of Still at Ovalhouse.\n\nTo continue, please update your device network settings and connect to the 'Vivian Maier' WiFi network.\n"]
+     [button "Check again" {:on-press #(dispatch [:fetch-ssid])
+                            :style {:flex 0}}]]))

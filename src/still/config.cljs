@@ -10,7 +10,7 @@
   {:private-host (str "https://" dev-ip ":8443")
    :public-host (str "http://" dev-ip ":8080")
    :ws-host (str "ws://" dev-ip ":8080")
-   :valid-ssids #{"roomie", "error" "Alpaca"}
+   :valid-ssids #{"roomie" "Alpaca"}
    :default-ssid "FETCHING"
    :auth-token "j2GY21Djms5pqfH2"})
 

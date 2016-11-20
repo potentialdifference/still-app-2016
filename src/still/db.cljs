@@ -8,6 +8,7 @@
 (s/def ::ssid string?)
 (s/def ::album-queued? boolean?)
 (s/def ::privacy-policy-agreed? boolean?)
+(s/def ::camera-authorized? boolean?)
 (s/def ::images-sent? boolean?)
 (s/def ::device-name string?)
 
@@ -32,6 +33,7 @@
 (s/def ::app-db (s/keys :req-un [::nav ::message ::images ::ssid
                                  ::album-queued?
                                  ::privacy-policy-agreed?
+                                 ::camera-authorized?
                                  ::upload-queue
                                  ::show
                                  ::device-name]))
@@ -47,6 +49,7 @@
    :ssid "FETCHING"
    :album-queued? false
    :privacy-policy-agreed? false
+   :camera-authorized? false
    :images-sent? false
    :upload-queue []
    :show {}

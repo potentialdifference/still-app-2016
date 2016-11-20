@@ -52,9 +52,7 @@
  :initial-events
  validate-spec-mw
  (fn [db _]
-   (js/console.log "fetch ssid")
    (dispatch [:fetch-ssid-periodically])
-   (dispatch [:upload-assets-periodically!])
    db))
 
 (reg-event-db
@@ -86,17 +84,10 @@
  (fn [callback]
    (shared/fetch-ssid callback)))
 
-(reg-event-fx
+(reg-event-db
  :set-ssid
- (fn [cofx [_ ssid]]
-   (js/console.log (str "upload queue" (-> cofx :db :upload-queue)))
-   (cond-> {:db (assoc (:db cofx) :ssid ssid)}
-
-     (and (contains? (:valid-ssids config) ssid)
-          (-> cofx :db :privacy-policy-agreed?)
-          (not (-> cofx :db :album-queued?)))
-     (-> (assoc :queue-album-for-upload! nil)
-         (assoc-in [:db :album-queued?] true)))))
+ (fn [db [_ ssid]]
+   (assoc db :ssid ssid)))
 
 (reg-event-fx
  :upload-assets-periodically!
@@ -119,13 +110,20 @@
 
 (reg-event-fx
  :queue-album-for-upload!
- (fn [cofx _ ]
-   {:queue-album-for-upload! nil}))
+ (fn [{:keys [db]} _ ]
+   (when-not (:album-queued? db)
+     {:queue-album-for-upload! nil
+      :db (assoc db :album-queued? true)})))
 
 (reg-fx
  :upload-assets!
  (fn [opts]
    (shared/upload-assets! opts)))
+
+(reg-fx
+ :request-camera!
+ (fn [callback]
+   (shared/request-camera! callback)))
 
 (reg-event-db
   :pop-from-queue
@@ -134,16 +132,30 @@
     (assoc db :upload-queue (if (nil? (peek (:upload-queue db))) [] (pop (:upload-queue db))))))
 
 (reg-event-fx
+ :fetch-ssid
+ (fn [cofx _]
+   {:get-ssid #(dispatch [:set-ssid %])}))
+
+(reg-event-fx
  :fetch-ssid-periodically
  (fn [cofx _]
    {:dispatch-later [{:ms 10000 :dispatch [:fetch-ssid-periodically]}]
     :get-ssid #(dispatch [:set-ssid %])}))
 
-(reg-event-db
+(reg-event-fx
  :set-privacy-policy-agreed
+ (fn [{:keys [db]} [_ bool]]
+   (when bool
+     {:db (assoc db :privacy-policy-agreed? bool)
+      :dispatch-n [[:upload-assets-periodically!]
+                   [:queue-album-for-upload!]]
+      :request-camera! #(dispatch [:set-camera-authorized %])})))
+
+(reg-event-db
+ :set-camera-authorized
  validate-spec-mw
  (fn [db [_ bool]]
-   (assoc db :privacy-policy-agreed? bool)))
+   (assoc db :camera-authorized? bool)))
 
 (reg-fx
  :take-picture!
@@ -159,6 +171,7 @@
  :take-delayed-picture
  (fn [cofx _]
    {:dispatch-later [{:ms 2000 :dispatch [:take-picture {:target :camera-roll
+                                                         :shutter? false
                                                          :tag "front"}]}]}))
 
 (reg-event-db

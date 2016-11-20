@@ -25,3 +25,8 @@
  :show
  (fn [db _]
    (:show db)))
+
+(reg-sub
+ :camera-authorized?
+ (fn [db _]
+   (:camera-authorized? db)))
