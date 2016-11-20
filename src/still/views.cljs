@@ -44,10 +44,17 @@
                           :background-color "white"
                           :border-radius    4
                           :width            120
-                          :height           120 :align-items "center" :justify-content "center" :margin 25}
-   :pre-show-button-text {
-                          :color "black" :font-size 20 :font-family "American Typewriter"}
-   :pre-show-image       {:resizeMode "contain" :flex 1 :width nil :height nil}
+                          :height           120
+                          :align-items "center"
+                          :justify-content "center"
+                          :margin 25}
+   :pre-show-button-text {:color "black"
+                          :font-size 20
+                          :font-family "American Typewriter"}
+   :pre-show-button-image {:width 120
+                           :height 120}
+   :pre-show-image       {:resizeMode "contain" :flex 1
+                          :width nil :height nil}
    :text                 {:font-family "American Typewriter"
                           :color "white"
                           :text-align "center"}

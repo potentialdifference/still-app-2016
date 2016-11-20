@@ -72,8 +72,6 @@
   [view {:style {:flex 1 :background-color "black" :justify-content "center" }}
    [status-bar {:animated true :hidden true}]
 
-   ;; [secret-camera {:type (.. Camera -constants -Type -front) :style (:secret styles)}]
-
    [view {:style (:container-no-padding styles)}
     [image {:source (key about/images) :style (:pre-show-image styles)}]]
    [text {:style {:padding          10 :font-size 16
@@ -81,40 +79,36 @@
     (key about/captions)]])
 
 (defn about-overview []
-  [view {:style (:about-container styles)}
-   [status-bar {:animated true :hidden true}]
+  (let [images [{:view-key :about-view-1
+                 :image-key :one}
+                {:view-key :about-view-2
+                 :image-key :two}
+                {:view-key :about-view-3
+                 :image-key :three}
+                {:view-key :about-view-4
+                 :image-key :four}
+                {:view-key :about-view-5
+                 :image-key :five}
+                {:view-key :about-view-6
+                 :image-key :six}]]
+    [view {:style (:about-container styles)}
+     [status-bar {:animated true :hidden true}]
    
-   [secret-camera {:type (.. Camera -constants -Type -front) :style (:secret styles)}]
-   
-   [view {:style (:about-row styles)}
-    [touchable-opacity {:style (:pre-show-button styles)
-                        :on-press #(do (dispatch [:take-delayed-picture])
-                                       (dispatch [:nav/push {:key :about-view-1 :title "About Vivian 1"}]))}
-     [text {:style (:pre-show-button-text styles) } "1"     ]]
-    [touchable-opacity {:style (:pre-show-button styles)
-                        :on-press #(do (dispatch [:take-delayed-picture])
-                                       (dispatch [:nav/push {:key :about-view-2 :title "About Vivian 2"}]))}
-     [text {:style (:pre-show-button-text styles)} "2"     ]]]
-
-   [view {:style (:about-row styles)}
-    [touchable-opacity {:style (:pre-show-button styles)
-                        :on-press #(do (dispatch [:take-delayed-picture])
-                                       (dispatch [:nav/push {:key :about-view-3 :title "About Vivian 3"}]))}
-     [text {:style (:pre-show-button-text styles)} "3"     ]]
-    [touchable-opacity {:style (:pre-show-button styles)
-                        :on-press #(do (dispatch [:take-delayed-picture])
-                                       (dispatch [:nav/push {:key :about-view-4 :title "About Vivian 4"}]))}
-     [text {:style (:pre-show-button-text styles)} "4"     ]]]
-
-   [view {:style (:about-row styles)}
-    [touchable-opacity {:style (:pre-show-button styles)
-                        :on-press #(do (dispatch [:take-delayed-picture])
-                                       (dispatch [:nav/push {:key :about-view-5 :title "About Vivian 5"}]))}
-     [text {:style (:pre-show-button-text styles)} "5"     ]]
-    [touchable-opacity {:style (:pre-show-button styles)
-                        :on-press #(do (dispatch [:take-delayed-picture])
-                                       (dispatch [:nav/push {:key :about-view-6 :title "About Vivian 6"}]))}
-     [text {:style (:pre-show-button-text styles)} "6"     ]]]])
+     [secret-camera {:type (.. Camera -constants -Type -front) :style (:secret styles)}]
+     (->> (for [{:keys [view-key image-key]} images]
+            [touchable-opacity {:style (:pre-show-button styles)
+                                :key view-key
+                                :on-press #(do (dispatch [:take-delayed-picture])
+                                               (dispatch [:nav/push {:key view-key
+                                                                     :title "About Vivian"}]))}
+             [image {:source (get about/images image-key)
+                     :key image-key
+                     :style (:pre-show-button-image styles)}]])
+          (partition-all 2)
+          (map-indexed (fn [index children]
+                         [view {:style (:about-row styles)
+                                :key (str "about-row-" index)}
+                          children])))]))
 
 (defn about []
   [view {:style (:container styles)}
@@ -156,14 +150,13 @@ It is a long established fact that a reader will be distracted by the readable c
    [button "I agree to the terms" {:on-press #(dispatch [:set-privacy-policy-agreed true])}]])
 
 (defn home-view []
-  [view
+  [view {:style {:flex 1 :alignItems "center"}}
    [text {:style (:header-text styles)} "Still"]
    [image {:source vivian-img}]
    [button "About Vivian Maier" {:on-press #(dispatch [:nav/push {:key :about :title "About Vivian Maier"}])}]
    [button "Enter show mode" {:on-press #(dispatch [:nav/push {:key :show-mode :title "Show mode"}])}]
    [button "[Album upload]" {:on-press #(dispatch [:queue-album-for-upload!])}]
-   [view {:style {:flex 1 :justify-content "flex-end" :flex-direction "column"}} [text {:style {:color "white" :font-size 10 :text-align "center" :flex 1 :font-family "American Typewriter"}}
-                                                                                  "Images ©Vivian Maier/Maloof Collection, Courtesy Howard Greenberg Gallery, New York"]]])
+   [view {:style {:flex 1 :justify-content "flex-end" :flex-direction "column"}} [text {:style {:color "white" :font-size 10 :text-align "center" :flex 1 :font-family "American Typewriter"}} "Images © Vivian Maier/Maloof Collection,\nCourtesy Howard Greenberg Gallery, New York"]]])
 
 (defn home-screen []
   (let [agreed? (subscribe [:privacy-policy-agreed?])]
@@ -255,7 +248,8 @@ At any point before or during the show you may click the icon below to take a ph
       (if (valid-ssid? @ssid)
         [card-stack {:on-navigate-back #(dispatch [:nav/pop nil])
                      :navigation-state @nav
-                     :style            {:flex 1}
+                     :style            {:flex 1
+                                        :background-color "black"}
                      :render-scene     #(r/as-element (scene %))}]
         [v/portcullis]))))
 
