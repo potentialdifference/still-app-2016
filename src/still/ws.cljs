@@ -6,6 +6,7 @@
     (js/console.log "Started websocket...")
     (set! ws.onmessage
           (fn [message]
+            (js/console.log (str "Message received:" (.-data message)))
             (let [message (js->clj (js/JSON.parse (.-data message)) :keywordize-keys true)]
               (case (:instruction message)
                 "displayText" (dispatch [:display-text (:content message)])

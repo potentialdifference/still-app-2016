@@ -1,6 +1,7 @@
 (ns still.ios.core
   (:require [reagent.core :as r :refer [atom]]
             [re-frame.core :refer [subscribe dispatch dispatch-sync]]
+            [still.views :as v :refer [styles]]
             [still.events]
             [still.ios.events]
             [still.subs]
@@ -14,93 +15,18 @@
 (def ReactNative (js/require "react-native"))
 (def Camera (js/require "react-native-camera"))
 
-
 (def KeepAwake (.-default (js/require "react-native-keep-awake")))
 (def keep-awake (r/adapt-react-class KeepAwake))
 
 (def card-stack (r/adapt-react-class (.-CardStack (.-NavigationExperimental ReactNative))))
-(def navigation-header-comp (.-Header (.-NavigationExperimental ReactNative)))
-(def navigation-header (r/adapt-react-class navigation-header-comp))
-(def header-title (r/adapt-react-class (.-Title (.-Header (.-NavigationExperimental ReactNative)))))
 
 (def capture-image (js/require "./images/ic_photo_camera_36pt.png"))
+(def camera-image (js/require "./images/ic_photo_camera_white_36pt.png"))
 
 (defn dimensions [from]
   (-> (.-Dimensions ReactNative)
       (.get from)
       (js->clj :keywordize-keys true)))
-
-(def styles
-  {:fullscreen           {:position "absolute"
-                          :top      0
-                          :left     0
-                          :bottom   0
-                          :right    0}
-   :container            {:flex 1
-                          :background-color "black"
-                          :position "relative"}
-   :container-no-padding {:flex 1 :background-color "black" :padding 0 :justify-content "space-around"}
-   :about-container      {:flex 1 :justify-content "center" :background-color "black"}
-   :about-row            {:flex 1 :flex-direction "row" :justify-content "center" :align-items "center"}
-   :button               {:background-color "white" :margin 10 :padding 10 :border-radius 5 :margin-top 10}
-   :preview              {:position "absolute"
-                          :top      0
-                          :left     0
-                          :bottom   0
-                          :right    0
-                                        ;:flex 1
-                                        ;:justify-content "flex-end"
-                                        ;:align-items "center"
-                          }
-   :secret               {:flex 0}
-   :overlay              {:position    "absolute"
-                          :padding     16
-                          :right       0
-                          :left        0
-                                        ;:top         1
-                          :bottom      30
-                          :align-items "center"
-                          }
-   :bottom-overlay       {:bottom           0
-                          :background-color "rgba(0,0,0,0.4)"
-                          :flex-direction   "row"
-                          :justify-content  "center"
-                          :align-items      "center"
-                          }
-   :capture-button       {:padding          15
-                          :background-color "white"
-                          :border-radius    40}
-   :pre-show-button      {:padding          30
-                          :background-color "white"
-                          :border-radius    4
-                          :width            120
-                          :height           120 :align-items "center" :justify-content "center" :margin 25}
-   :pre-show-button-text {
-                          :color "black" :font-size 20 :font-family "American Typewriter"}
-   :pre-show-image       {:resizeMode "contain" :flex 1 :width nil :height nil}
-   :text                 {:font-family "American Typewriter"
-                          :color "white"
-                          :text-align "center"}
-   :header-text          {:font-size 30
-                          :font-weight "100"
-                          :margin-bottom 20
-                          :text-align "center"
-                          :color "white"
-                          :font-family "American Typewriter"}
-   :text-message-box     {:flex 1
-                          :border-radius 10
-                          :padding 20
-                          :position "relative"
-                          :top 200
-                          :width 300
-                          :background-color "green"}
-   :show-mode-text       {:font-size 24
-                          :line-height 40
-                          :text-align "justify"
-                          :background-color "black"
-                          :color "white"
-                          :font-family "American Typewriter"}})
-
 
 (def app-registry (.-AppRegistry ReactNative))
 (def status-bar (r/adapt-react-class (.-StatusBar ReactNative)))
@@ -127,7 +53,6 @@
 (defn alert [title]
   (.alert (.-Alert ReactNative) title))
 
-
 (defn take-picture []
   (fn []
     [view {:style (:container styles)}
@@ -138,7 +63,8 @@
      [view {:style (merge (:overlay styles)
                           (:bottom-overlay styles))}
       [touchable-opacity {:style (:capture-button styles)
-                          :on-press #(dispatch [:take-picture {:target :camera-roll}])}
+                          :on-press #(do (dispatch [:take-picture {:target :camera-roll}])
+                                         (dispatch [:nav/pop nil]))}
        [image {:source capture-image}]]]]))
 
 (defn about-view-picture [key]
@@ -214,11 +140,20 @@
     label]])
 
 (defn privacy-policy-view []
-  [view
+  [view {:style {:flex 1}}
    [text {:style (:header-text styles)} "Privacy Policy"]
-   [text {:style (:text styles)}
-    "To proceed you must agree to our privacy policy. If you do not agree, please close the application."]
-   [button "I agree" {:on-press #(dispatch [:set-privacy-policy-agreed true])}]])
+   [scroll-view {:style {:flex 1}}
+    [text {:style (:text styles)}
+     "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+
+Why do we use it?
+It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like)
+
+Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+
+Why do we use it?
+It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like)"]]
+   [button "I agree to the terms" {:on-press #(dispatch [:set-privacy-policy-agreed true])}]])
 
 (defn home-view []
   [view
@@ -237,27 +172,6 @@
         [home-view]
         [privacy-policy-view]))))
 
-(defn nav-title [props]
-    [header-title
-     (aget props "scene" "route" "title")])
-
-(defn header
-  [props]
-  (let [ssid (subscribe [:ssid])]
-    (fn []
-      [view
-       (when-not (or (= @ssid (:default-ssid config))
-                     (contains? (:valid-ssids config) @ssid))
-         [view {:style {:background-color "red"
-                        :padding 10}}
-          [text "Please ensure your device is connected to the network"]])
-       [navigation-header
-        (assoc
-         (js->clj props)
-         :render-title-component #(r/as-element (nav-title %))
-         :on-navigate-back #(dispatch [:nav/pop nil])
-         :style {:background-color "white" :border-bottom-color "white"})]])))
-
 (def preshow-blurb
   [text {:style (:text styles)}
    "Your device is now in 'show mode'.
@@ -274,10 +188,8 @@ At any point before or during the show you may click the icon below to take a ph
                              :flex 1
                              :align-items "center"
                              :justify-content "center")}
-         [touchable-opacity {:style (:capture-button styles)
-                             :on-press #(dispatch [:nav/push {:key :take-picture :title "Take picture"}])}
-          [image {:source capture-image}]]
-         [text {:style (:text styles)} @show] ;; TODO remove
+         
+         ;; [text {:style (:text styles)} @show] ;; TODO remove
          [keep-awake] ;; Ensure screen doesn't sleep
          (when image-uri
            [image {:source {:uri image-uri}
@@ -285,7 +197,10 @@ At any point before or during the show you may click the icon below to take a ph
                            :resizeMode (.. Image -resizeMode -contain)}}])
          (when message-content
            [view {:style (:text-message-box styles)}
-            [text {:style (:text styles)} message-content]])]))))
+            [text {:style (:text styles)} message-content]])
+         [touchable-opacity {:style (:camera-button styles)
+                             :on-press #(dispatch [:nav/push {:key :take-picture :title "Take picture"}])}
+          [image {:source camera-image}]]]))))
 
 (defn scene-wrapper [child]
   (let [ssid (subscribe [:ssid])
@@ -306,9 +221,8 @@ At any point before or during the show you may click the icon below to take a ph
                      (contains? (:valid-ssids config) @ssid))
          [view {:style {:background-color "red"
                         :padding 10}}
-          [text "Please ensure your device is connected to the network"]])
-       [view {:padding 40}
-        child]])))
+          [text " ensure your device is connected to the network"]])
+       [view {:style {:flex 1}} child]])))
 
 (defn scene-wrapper-wrapper [child]
   [scene-wrapper child])
@@ -330,14 +244,20 @@ At any point before or during the show you may click the icon below to take a ph
          "about-view-5" [about-view-picture :five]
          "about-view-6" [about-view-picture :six])))))
 
+(defn valid-ssid? [ssid]
+  (or (= (:default-ssid config) ssid)
+      (contains? (:valid-ssids config) ssid)))
+
 (defn app-root []
-  (let [nav (subscribe [:nav/state])]
+  (let [nav (subscribe [:nav/state])
+        ssid (subscribe [:ssid])]
     (fn []
-      [card-stack {:on-navigate-back #(dispatch [:nav/pop nil])
-                   ;; :render-header   #(r/as-element (header %))
-                   :navigation-state @nav
-                   :style            {:flex 1}
-                   :render-scene     #(r/as-element (scene %))}])))
+      (if (valid-ssid? @ssid)
+        [card-stack {:on-navigate-back #(dispatch [:nav/pop nil])
+                     :navigation-state @nav
+                     :style            {:flex 1}
+                     :render-scene     #(r/as-element (scene %))}]
+        [v/portcullis]))))
 
 (defn init []
   (dispatch-sync [:initialize-db {:key :first-route
