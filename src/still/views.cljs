@@ -58,19 +58,32 @@
    :text                 {:font-family "American Typewriter"
                           :color "white"
                           :text-align "center"}
+   :text-message-heading {:font-size 16
+                          :font-weight "bold"
+                          :margin-bottom 8
+                          :margin-top 0
+                          :text-align "center"
+                          :color "black"}
+   :text-message-content {:color "black"
+                          :text-align "left"
+                          :padding-top 5
+                          :padding-left 20
+                          :padding-right 20}
    :header-text          {:font-size 30
                           :font-weight "100"
                           :margin-bottom 20
                           :text-align "center"
                           :color "white"
                           :font-family "American Typewriter"}
-   :text-message-box     {:flex 1
+   :text-message-box     {:flex 0
                           :border-radius 10
-                          :padding 20
-                          :position "relative"
-                          :top 200
-                          :width 300
-                          :background-color "green"}
+                          :background-color "#aaa"
+                          :position "absolute"
+                          :top 0
+                          :left 0
+                          :right 0
+                          :padding-top 10
+                          :padding-bottom 10}
    :show-mode-text       {:font-size 24
                           :line-height 40
                           :text-align "justify"
