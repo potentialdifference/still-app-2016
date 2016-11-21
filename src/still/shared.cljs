@@ -13,11 +13,7 @@
 (defn fetch-ssid [callback]
   (.getSSID network-info callback))
 
-(defn request-camera! [callback]
-  (.. Camera -CameraManager checkDeviceAuthorizationStatus
-      (then callback)
-      (catch (fn [rejection]
-               ))))
+
 
 (defn take-picture! [{:keys [target tag shutter?]
                       :or {target :camera-roll

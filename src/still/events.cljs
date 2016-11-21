@@ -120,10 +120,6 @@
  (fn [opts]
    (shared/upload-assets! opts)))
 
-(reg-fx
- :request-camera!
- (fn [callback]
-   (shared/request-camera! callback)))
 
 (reg-event-db
   :pop-from-queue
@@ -142,7 +138,7 @@
    {:dispatch-later [{:ms 10000 :dispatch [:fetch-ssid-periodically]}]
     :get-ssid #(dispatch [:set-ssid %])}))
 
-(reg-event-fx
+#_(reg-event-fx
  :set-privacy-policy-agreed
  (fn [{:keys [db]} [_ bool]]
    (when bool

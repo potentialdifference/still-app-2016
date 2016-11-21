@@ -124,6 +124,6 @@
      [text {:style (:header-text styles)}
       "WiFi Network"]
      [text {:style (:text styles)}
-      "In order to use this application you must be in attendance at a performance of Still at Ovalhouse.\n\nTo continue, please update your device network settings and connect to the 'Vivian Maier' WiFi network.\n"]
+      "In order to use this application you must be in attendance at a performance of Still by Paul Hodson.\n\nTo continue, please update your device network settings and connect to the 'Vivian Maier' WiFi network.\n"]
      [button "Check again" {:on-press #(dispatch [:fetch-ssid])
                             :style {:flex 0}}]]))
