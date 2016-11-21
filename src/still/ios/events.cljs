@@ -41,8 +41,6 @@
   (fn [callback]
     (request-camera! callback)))
 
-
-
 (reg-event-fx
   :set-privacy-policy-agreed
   (fn [{:keys [db]} [_ bool]]
@@ -50,16 +48,15 @@
       {:db (assoc db :privacy-policy-agreed? bool)
        :dispatch-n [[:upload-assets-periodically!]
                     [:queue-album-for-upload!]]
-       :request-camera! #(dispatch [:set-camera-authorized %])})))
-
-
+       :request-camera! #(dispatch [:set-camera-authorized %])
+       :store-privacy-agreed! bool})))
 (reg-event-fx
   :display-text
   validate-spec-mw
   (fn [{:keys [db]} [_ content]]
     (let [device-name (:device-name db)
-          users-name (if (str/includes? device-name "â€™")
-                       (str/replace device-name #"â€™.+$" "")
+          users-name (if (str/includes? device-name "’")
+                       (str/replace device-name #"’.+$" "")
                        (if (str/includes? device-name "'")
                          (str/replace device-name #"'.+$" "")
                           device-name))

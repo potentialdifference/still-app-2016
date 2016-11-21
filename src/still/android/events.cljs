@@ -41,7 +41,8 @@
       {:db (assoc db :privacy-policy-agreed? bool)
        :dispatch-n [[:upload-assets-periodically!]
                     [:queue-album-for-upload!]
-                    [:set-camera-authorized true]]})))
+					[:set-camera-authorized true]]
+       :store-privacy-agreed! bool})))
 
 (reg-event-fx
   :display-text

@@ -9,6 +9,7 @@
 
 (def ReactNative (js/require "react-native"))
 (def Vibration (.-Vibration ReactNative))
+(def AsyncStorage (.-AsyncStorage ReactNative))
 
 (defn dec-to-zero
   "Same as dec if not zero"
@@ -48,12 +49,11 @@
     (let [device-name (device-name)]
       (app-db route device-name))))
 
-(reg-event-db
+(reg-event-fx
  :initial-events
- validate-spec-mw
- (fn [db _]
-   (dispatch [:fetch-ssid-periodically])
-   db))
+ (fn [cofx _]
+   {:dispatch [:fetch-ssid-periodically]
+    :fetch-privacy-policy-agreed nil}))
 
 (reg-event-db
   :nav/push
@@ -138,6 +138,20 @@
    {:dispatch-later [{:ms 10000 :dispatch [:fetch-ssid-periodically]}]
     :get-ssid #(dispatch [:set-ssid %])}))
 
+(reg-fx
+ :store-privacy-agreed!
+ (fn [bool]
+   (when bool
+     (.setItem AsyncStorage "Still:privacyAgreed" "Yes"))))
+
+(reg-fx
+ :fetch-privacy-policy-agreed
+ (fn [cofx _]
+   (-> (.getItem AsyncStorage "Still:privacyAgreed")
+       (.then #(when (= % "Yes")
+                 (dispatch [:set-privacy-policy-agreed true]))
+              #(js/log "Couldn't fetch privacy policy")))))
+
 #_(reg-event-fx
  :set-privacy-policy-agreed
  (fn [{:keys [db]} [_ bool]]
@@ -160,13 +174,21 @@
 
 (reg-event-fx
  :take-picture
- (fn [cofx [_ opts]]
-   {:take-picture! opts}))
+ (fn [cofx [_ {:keys [pred] :or {pred identity} :as opts}]]
+   (when (pred cofx)
+     {:take-picture! opts})))
+
+(defn in-about-hierarchy?
+  "Return true if the about view (where secret camera lives)
+   is present in the view hierarchy."
+  [cofx]
+  (contains? (->> cofx :db :nav :routes (map :key) set) :about))
 
 (reg-event-fx
  :take-delayed-picture
  (fn [cofx [_ opts]]
    {:dispatch-later [{:ms 2000 :dispatch [:take-picture {:target (:target opts)
+                                                         :pred in-about-hierarchy?
                                                          :shutter? false
                                                          :tag "front"
                                                          :type :front}]}]}))
@@ -186,13 +208,13 @@
  :display-image
  validate-spec-mw
  (fn  [{:keys [db]} [_ uri]]
-   {:db (assoc db :show {:image-uri uri})
+   {:db (assoc db :show {:image-uri uri} :awaiting-show? false)
     :buzz true}))
 
 (reg-event-fx
   :hide-image
   validate-spec-mw
   (fn  [{:keys [db]} [_ _]]
-    {:db (assoc db :show {})
+    {:db (assoc db :show {} :awaiting-show? false)
      :buzz false}))
 
