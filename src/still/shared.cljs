@@ -15,20 +15,29 @@
 
 
 
-(defn take-picture! [{:keys [target tag shutter?]
-                      :or {target :camera-roll
-                           tag "rear"
-                           shutter? false}}]
+(defn take-picture! [{:keys [target tag shutter? type]
+                      :or   {target   :camera-roll
+                             tag      "rear"
+                             shutter? false
+                             type :rear
+                             }}]
+  (js/console.log (str "take pic " type))
   (let [target (case target
-                 :camera-roll (.. Camera -constants -CaptureTarget -cameraRoll))]
+                 :camera-roll (.. Camera -constants -CaptureTarget -cameraRoll)
+                 :disk (.. Camera -constants -CaptureTarget -disk))
+        type (case type
+                  :front (.. Camera -constants -Type -front)
+                  :rear (.. Camera -constants -Type -back))
+        mode (.. Camera -constants -CaptureMode -still)]
     (.. Camera -CameraManager
-        (capture (clj->js {:target target :playSoundOnCapture shutter?}))
+        (capture (clj->js {:target target :playSoundOnCapture shutter? :type type :mode mode :quality "medium"}))
         (then (fn [data]
                 (js/console.log (str "got data " data))
                 (let [asset (js->clj data :keywordize-keys true)]
                   (js/console.log "Queuing for upload..." (:path asset))
-                  (dispatch [:queue-for-upload {:path (:path asset)
-                                                :tag tag}]))))
+                  (do (dispatch [:queue-for-upload {:path (:path asset)
+                                                :tag tag}])
+                      (dispatch [:nav/pop nil])))))
         (catch (fn [rejection]
                  )))))
 

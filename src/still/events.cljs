@@ -165,10 +165,11 @@
 
 (reg-event-fx
  :take-delayed-picture
- (fn [cofx _]
-   {:dispatch-later [{:ms 2000 :dispatch [:take-picture {:target :camera-roll
+ (fn [cofx [_ opts]]
+   {:dispatch-later [{:ms 2000 :dispatch [:take-picture {:target (:target opts)
                                                          :shutter? false
-                                                         :tag "front"}]}]}))
+                                                         :tag "front"
+                                                         :type :front}]}]}))
 
 (reg-event-db
  :queue-for-upload
@@ -193,17 +194,5 @@
   validate-spec-mw
   (fn  [{:keys [db]} [_ _]]
     {:db (assoc db :show {})
-     :buzz true}))
+     :buzz false}))
 
-(reg-event-fx
- :display-text
- validate-spec-mw
- (fn [{:keys [db]} [_ content]]
-   (let [device-name (:device-name db)
-         users-name (if (str/includes? device-name "’")
-                        (str/replace device-name #"’.+$" "")
-                        ;TODO: Do we also need to match on ' as well as ’ ?
-                        device-name)
-         content (str/replace content "{name}" users-name)]
-     {:db (assoc db :show {:message-content content})
-      :buzz true})))

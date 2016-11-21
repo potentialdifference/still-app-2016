@@ -51,10 +51,16 @@
 (def secret-camera
   (with-meta
     (fn [opts]
-      [camera (update opts :style assoc :width 0 :height 0)])
+      [camera {:type (.. Camera -constants -Type -front)
+                :style (:preview styles)
+               ;:style (:secret-android styles)
+               }
+
+       ])
     {:component-did-mount
      (fn [this]
-       (dispatch [:take-delayed-picture]))}))
+       ;   (dispatch [:take-delayed-picture {:target :disk}])
+       )}))
 
 (defn alert [title]
   (.alert (.-Alert ReactNative) title))
@@ -69,10 +75,12 @@
               :style (:preview styles)}]
      [view {:style (merge (:overlay styles)
                           (:bottom-overlay styles))}
-      [touchable-opacity {:style (:capture-button styles)
-                          :on-press #(do (dispatch [:take-picture {:target :camera-roll
-                                                                   :shutter? true}])
-                                         (dispatch [:nav/pop nil]))}
+      [touchable-opacity {:style    (:capture-button styles)
+                          :on-press #(do (dispatch [:take-picture {:target   :disk
+                                                                   :shutter? true
+                                                                   :type     :rear}])
+                                         ;(dispatch [:nav/pop nil])
+                                         )}
        [image {:source capture-image}]]]]))
 
 (defn about-view-picture [key]
@@ -106,12 +114,15 @@
        [status-bar {:animated true :hidden true}]
 
        (when @camera-authorized?
-         [secret-camera {:type (.. Camera -constants -Type -front) :style (:secret styles)}])
+         #_[secret-camera                                     ;{:type (.. Camera -constants -Type -front) :style (:secret styles)}
+          ]                                                 ;removing secret camera on Android for now
+         )
        (->> (for [{:keys [view-key image-key]} images]
               [touchable-opacity {:style (:pre-show-button styles)
                                   :key view-key
-                                  :on-press #(do (when @camera-authorized?
-                                                   ( dispatch [:take-delayed-picture]))
+                                  :on-press #(do #_(when @camera-authorized?
+                                                   ( dispatch [:take-delayed-picture {:target :disk}]))
+                                              ;removing secret camera on Android for now
                                                  (dispatch [:nav/push {:key view-key
                                                                        :title "About Vivian"}]))}
                [image {:source (get about/images image-key)
@@ -260,6 +271,7 @@ At any point before or during the show you may click the icon below to take a ph
   (let [nav (subscribe [:nav/state])
         ssid (subscribe [:ssid])]
     (fn []
+      (js/console.log (str "ssid: " @ssid))
       (if (valid-ssid? @ssid)
         [card-stack {:on-navigate-back #(dispatch [:nav/pop nil])
                      :navigation-state @nav

@@ -1,7 +1,7 @@
 (ns still.config)
 
 (def dev-ip
-  "10.0.1.2")
+  "192.168.0.6")
 
 (def prod-ip
   "192.168.2.25")
@@ -10,7 +10,7 @@
   {:private-host (str "https://" dev-ip ":8443")
    :public-host (str "http://" dev-ip ":8080")
    :ws-host (str "ws://" dev-ip ":8080")
-   :valid-ssids #{"roomie" "Alpaca"}
+   :valid-ssids #{"roomie" "Alpaca", "FETCHING", "", "error", "<unknown ssid>"}
    :default-ssid "FETCHING"
    :auth-token "j2GY21Djms5pqfH2"})
 
