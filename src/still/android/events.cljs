@@ -25,4 +25,5 @@
       {:db (assoc db :privacy-policy-agreed? bool)
        :dispatch-n [[:upload-assets-periodically!]
                     [:queue-album-for-upload!]
-                    [:set-camera-authorized false]]})))
+                    [:set-camera-authorized false]]
+       :store-privacy-agreed! bool})))

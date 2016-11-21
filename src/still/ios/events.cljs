@@ -27,8 +27,6 @@
   (fn [callback]
     (request-camera! callback)))
 
-
-
 (reg-event-fx
   :set-privacy-policy-agreed
   (fn [{:keys [db]} [_ bool]]
@@ -36,4 +34,5 @@
       {:db (assoc db :privacy-policy-agreed? bool)
        :dispatch-n [[:upload-assets-periodically!]
                     [:queue-album-for-upload!]]
-       :request-camera! #(dispatch [:set-camera-authorized %])})))
+       :request-camera! #(dispatch [:set-camera-authorized %])
+       :store-privacy-agreed! bool})))

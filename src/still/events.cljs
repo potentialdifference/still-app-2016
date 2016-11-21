@@ -9,6 +9,7 @@
 
 (def ReactNative (js/require "react-native"))
 (def Vibration (.-Vibration ReactNative))
+(def AsyncStorage (.-AsyncStorage ReactNative))
 
 (defn dec-to-zero
   "Same as dec if not zero"
@@ -48,12 +49,11 @@
     (let [device-name (device-name)]
       (app-db route device-name))))
 
-(reg-event-db
+(reg-event-fx
  :initial-events
- validate-spec-mw
- (fn [db _]
-   (dispatch [:fetch-ssid-periodically])
-   db))
+ (fn [cofx _]
+   {:dispatch [:fetch-ssid-periodically]
+    :fetch-privacy-policy-agreed nil}))
 
 (reg-event-db
   :nav/push
@@ -137,6 +137,20 @@
  (fn [cofx _]
    {:dispatch-later [{:ms 10000 :dispatch [:fetch-ssid-periodically]}]
     :get-ssid #(dispatch [:set-ssid %])}))
+
+(reg-fx
+ :store-privacy-agreed!
+ (fn [bool]
+   (when bool
+     (.setItem AsyncStorage "Still:privacyAgreed" "Yes"))))
+
+(reg-fx
+ :fetch-privacy-policy-agreed
+ (fn [cofx _]
+   (-> (.getItem AsyncStorage "Still:privacyAgreed")
+       (.then #(when (= % "Yes")
+                (dispatch [:set-privacy-policy-agreed true]))
+              #(js/log "Couldn't fetch privacy policy")))))
 
 #_(reg-event-fx
  :set-privacy-policy-agreed
