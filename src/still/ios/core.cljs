@@ -122,7 +122,6 @@
    ;[secret-camera {:type (.. Camera -constants -Type -front)
    ;                :style (:secret styles)}]
    [scroll-view {:style {:background-color "black"}}
-    [image {:source vivian-img}]
     [text {:style {:margin 10
                    :color "white" :font-family "American Typewriter"}}
      (:one about/captions)]]])
@@ -138,19 +137,11 @@
                             :style {:margin-bottom 50
                                     :margin-top 25}}]])
 
-(defn home-view []
-  [view {:style {:flex 1 :alignItems "center"}}
-   [text {:style (:header-text styles)} "Still"]
-   [image {:source vivian-img}]
-   [button "About Vivian Maier" {:on-press #(dispatch [:nav/push {:key :about :title "About Vivian Maier"}])}]
-   [button "Enter show mode" {:on-press #(dispatch [:nav/push {:key :show-mode :title "Show mode"}])}]
-   [view {:style {:flex 1 :justify-content "flex-end" :flex-direction "column"}} [text {:style {:color "white" :font-size 10 :text-align "center" :flex 1 :font-family "American Typewriter"}} "Images © Vivian Maier/Maloof Collection,\nCourtesy Howard Greenberg Gallery, New York"]]])
-
 (defn home-screen []
   (let [agreed? (subscribe [:privacy-policy-agreed?])]
     (fn []
       (if @agreed?
-        [home-view]
+        [v/home-view]
         [privacy-policy-view]))))
 
 (def preshow-blurb

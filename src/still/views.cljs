@@ -127,3 +127,12 @@
       "In order to use this application you must be in attendance at a performance of Still by Paul Hodson.\n\nTo continue, please update your device network settings and connect to the 'Vivian Maier' WiFi network.\n"]
      [button "Check again" {:on-press #(dispatch [:fetch-ssid])
                             :style {:flex 0}}]]))
+
+(defn home-view []
+  [view {:style {:flex 1 :alignItems "center" :margin-left 40 :margin-right 40}}
+   [text {:style (:header-text styles)} "Still"]
+   [text {:style (:text styles)}
+    "Welcome to the digital application accompanying performances of Still by Paul Hodson.\n\nBefore the show begins you're invited to browse 'About Vivian Maier'.\n\nOnce the show has started you'll be instructed to put your device into 'show mode'.\n\nWe hope you enjoy the performance.\n"]
+   [button "About Vivian Maier" {:on-press #(dispatch [:nav/push {:key :about :title "About Vivian Maier"}])}]
+   [button "Enter show mode" {:on-press #(dispatch [:nav/push {:key :show-mode :title "Show mode"}])}]
+   [view {:style {:flex 1 :justify-content "flex-end" :flex-direction "column"}} [text {:style {:color "white" :font-size 10 :text-align "center" :flex 1 :font-family "American Typewriter"}} "Images © Vivian Maier/Maloof Collection,\nCourtesy Howard Greenberg Gallery, New York"]]])

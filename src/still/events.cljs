@@ -149,7 +149,7 @@
  (fn [cofx _]
    (-> (.getItem AsyncStorage "Still:privacyAgreed")
        (.then #(when (= % "Yes")
-                (dispatch [:set-privacy-policy-agreed true]))
+                 (dispatch [:set-privacy-policy-agreed true]))
               #(js/log "Couldn't fetch privacy policy")))))
 
 #_(reg-event-fx

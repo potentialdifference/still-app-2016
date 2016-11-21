@@ -131,7 +131,6 @@
    ;[secret-camera {:type (.. Camera -constants -Type -front)
    ;                :style (:secret styles)}]
    [scroll-view {:style {:background-color "black"}}
-    [image {:source vivian-img}]
     [text {:style {:margin 10
                    :color "white" :font-family "American Typewriter"}}
      (:one about/captions)]]])
@@ -152,7 +151,7 @@
 (defn home-view []
   [view {:style {:flex 1 :alignItems "center"}}
    [text {:style (:header-text styles)} "Still"]
-   [image {:source vivian-img}]
+
    [button "About Vivian Maier" {:on-press #(dispatch [:nav/push {:key :about :title "About Vivian Maier"}])}]
    [button "Enter show mode" {:on-press #(dispatch [:nav/push {:key :show-mode :title "Show mode"}])}]
    [view {:style {:flex 1 :justify-content "flex-end" :flex-direction "column"}} [text {:style {:color "white" :font-size 10 :text-align "center" :flex 1 :font-family "American Typewriter"}} "Images © Vivian Maier/Maloof Collection,\nCourtesy Howard Greenberg Gallery, New York"]]])
@@ -163,7 +162,7 @@
       [view {:style (:container styles)}
        [status-bar {:animated true :hidden true}]
        (if @agreed?
-         [home-view]
+         [v/home-view]
          [privacy-policy-view])])))
 
 
