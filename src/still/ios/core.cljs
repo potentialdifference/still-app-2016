@@ -66,6 +66,7 @@
       [touchable-opacity {:style (:capture-button styles)
                           :on-press #(do (dispatch [:take-picture {:target :camera-roll
                                                                    :shutter? true}])
+                                         (js/alert "Picture taken")
                                          (dispatch [:nav/pop nil]))}
        [image {:source capture-image}]]]]))
 
@@ -160,7 +161,11 @@ If you have enabled camera access, you may click the icon above to take a photo 
     (fn []
       (if @awaiting-show?
 
-        preshow-blurb
+        [view preshow-blurb
+         (when @camera-authorized?
+           [touchable-opacity {:style (:camera-button styles)
+                               :on-press #(dispatch [:nav/push {:key :take-picture :title "Take picture"}])}
+            [image {:source camera-image}]])]
 
         (let [{:keys [image-uri message-content]} @show]
           [view {:style (assoc (:container styles)

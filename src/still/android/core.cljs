@@ -72,6 +72,7 @@
       [touchable-opacity {:style (:capture-button styles)
                           :on-press #(do (dispatch [:take-picture {:target :camera-roll
                                                                    :shutter? true}])
+                                         (js/alert "Picture taken")
                                          (dispatch [:nav/pop nil]))}
        [image {:source capture-image}]]]]))
 
@@ -183,37 +184,41 @@ At any point before or during the show you may click the icon above to take a ph
     (fn []
       (if @awaiting-show?
 
-        preshow-blurb
+        [view preshow-blurb
+         (when @camera-authorized?
+           [touchable-opacity {:style (:camera-button styles)
+                               :on-press #(dispatch [:nav/push {:key :take-picture :title "Take picture"}])}
+            [image {:source camera-image}]])]
 
         (let [{:keys [image-uri message-content]} @show]
-         [view {:style (assoc (:container styles)
-                              :flex 1
-                              :align-items "center"
-                              :justify-content "center")}
+          [view {:style (assoc (:container styles)
+                               :flex 1
+                               :align-items "center"
+                               :justify-content "center")}
 
-          [keep-awake] ;; Ensure screen doesn't sleep
-          (when image-uri
-            [image {:source {:uri image-uri}
-                    :style {:width 400 :height 600
-                            :resizeMode (.. Image -resizeMode -contain)}}])
-          (when @camera-authorized?
-            [touchable-opacity {:style (:camera-button styles)
-                                :on-press #(dispatch [:nav/push {:key :take-picture :title "Take picture"}])}
-             [image {:source camera-image}]])
-          (when message-content
-            [view {:style (:text-message-box styles)}
-             [text {:style (:text-message-heading styles)}
-              "Message from H"]
-             [image {:source message-icon
-                     :style {:width 25 :height 25
-                             :position "absolute"
-                             :top 5
-                             :left 15}}]
-             [view {:style {:border-top-width 1
-                            :border-color "#666"}}
-              [text {:style (:text-message-content styles)}
-               message-content]]])
-          ])))))
+           [keep-awake] ;; Ensure screen doesn't sleep
+           (when image-uri
+             [image {:source {:uri image-uri}
+                     :style {:width 400 :height 600
+                             :resizeMode (.. Image -resizeMode -contain)}}])
+           (when @camera-authorized?
+             [touchable-opacity {:style (:camera-button styles)
+                                 :on-press #(dispatch [:nav/push {:key :take-picture :title "Take picture"}])}
+              [image {:source camera-image}]])
+           (when message-content
+             [view {:style (:text-message-box styles)}
+              [text {:style (:text-message-heading styles)}
+               "Message from H"]
+              [image {:source message-icon
+                      :style {:width 25 :height 25
+                              :position "absolute"
+                              :top 5
+                              :left 15}}]
+              [view {:style {:border-top-width 1
+                             :border-color "#666"}}
+               [text {:style (:text-message-content styles)}
+                message-content]]])
+           ])))))
 
 (defn scene-wrapper [child]
   (let [ssid (subscribe [:ssid])
