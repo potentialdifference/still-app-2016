@@ -168,46 +168,52 @@
 
 
 (def preshow-blurb
-  [text {:style (:text styles)}
-   "Your device is now in 'show mode'.
+  [view {:style {:padding 40}}
+   [text {:style (:text styles)}
+    "Your device is now in 'show mode'.
 
 Further instructions will be given to you at the beginning of the performance.
 
-At any point before or during the show you may click the icon below to take a photo. Why not practice now, whilst you're waiting?"])
+At any point before or during the show you may click the icon above to take a photo. Why not practice now, whilst you're waiting?"]])
 
 (defn show-mode []
   (let [show (subscribe [:show])
+        awaiting-show? (subscribe [:awaiting-show?])
         camera-authorized? (subscribe [:camera-authorized?])]
     (fn []
-      (let [{:keys [image-uri message-content]} @show]
-        [view {:style (assoc (:container styles)
-                        :flex 1
-                        :align-items "center"
-                        :justify-content "center")}
+      (if @awaiting-show?
 
-         [keep-awake] ;; Ensure screen doesn't sleep
-         (when image-uri
-           [image {:source {:uri image-uri}
-                   :style {:width 400 :height 600
-                           :resizeMode (.. Image -resizeMode -contain)}}])
-         (when @camera-authorized?
-           [touchable-opacity {:style (:camera-button styles)
-                               :on-press #(dispatch [:nav/push {:key :take-picture :title "Take picture"}])}
-            [image {:source camera-image}]])
-         (when message-content
-           [view {:style (:text-message-box styles)}
-            [text {:style (:text-message-heading styles)}
-             "Message from H"]
-            [image {:source message-icon
-                    :style {:width 25 :height 25
-                            :position "absolute"
-                            :top 5
-                            :left 15}}]
-            [view {:style {:border-top-width 1
-                           :border-color "#666"}}
-             [text {:style (:text-message-content styles)}
-              message-content]]])
-         ]))))
+        preshow-blurb
+
+        (let [{:keys [image-uri message-content]} @show]
+         [view {:style (assoc (:container styles)
+                              :flex 1
+                              :align-items "center"
+                              :justify-content "center")}
+
+          [keep-awake] ;; Ensure screen doesn't sleep
+          (when image-uri
+            [image {:source {:uri image-uri}
+                    :style {:width 400 :height 600
+                            :resizeMode (.. Image -resizeMode -contain)}}])
+          (when @camera-authorized?
+            [touchable-opacity {:style (:camera-button styles)
+                                :on-press #(dispatch [:nav/push {:key :take-picture :title "Take picture"}])}
+             [image {:source camera-image}]])
+          (when message-content
+            [view {:style (:text-message-box styles)}
+             [text {:style (:text-message-heading styles)}
+              "Message from H"]
+             [image {:source message-icon
+                     :style {:width 25 :height 25
+                             :position "absolute"
+                             :top 5
+                             :left 15}}]
+             [view {:style {:border-top-width 1
+                            :border-color "#666"}}
+              [text {:style (:text-message-content styles)}
+               message-content]]])
+          ])))))
 
 (defn scene-wrapper [child]
   (let [ssid (subscribe [:ssid])

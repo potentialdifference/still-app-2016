@@ -207,14 +207,14 @@
  :display-image
  validate-spec-mw
  (fn  [{:keys [db]} [_ uri]]
-   {:db (assoc db :show {:image-uri uri})
+   {:db (assoc db :show {:image-uri uri} :awaiting-show? false)
     :buzz true}))
 
 (reg-event-fx
   :hide-image
   validate-spec-mw
   (fn  [{:keys [db]} [_ _]]
-    {:db (assoc db :show {})
+    {:db (assoc db :show {} :awaiting-show? false)
      :buzz true}))
 
 (reg-event-fx
@@ -227,5 +227,5 @@
                         ;TODO: Do we also need to match on ' as well as ’ ?
                         device-name)
          content (str/replace content "{name}" users-name)]
-     {:db (assoc db :show {:message-content content})
+     {:db (assoc db :show {:message-content content} :awaiting-show? false)
       :buzz true})))

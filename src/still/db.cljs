@@ -11,6 +11,7 @@
 (s/def ::camera-authorized? boolean?)
 (s/def ::images-sent? boolean?)
 (s/def ::device-name string?)
+(s/def ::awaiting-show? boolean?)
 
 (s/def ::path string?)
 (s/def ::tag string?)
@@ -36,7 +37,8 @@
                                  ::camera-authorized?
                                  ::upload-queue
                                  ::show
-                                 ::device-name]))
+                                 ::device-name
+                                 ::awaiting-show?]))
 
 ;; initial state of app-db
 (defn app-db
@@ -52,5 +54,6 @@
    :camera-authorized? false
    :images-sent? false
    :upload-queue []
+   :awaiting-show? true
    :show {}
    :device-name device-name})

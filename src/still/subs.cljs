@@ -30,3 +30,8 @@
  :camera-authorized?
  (fn [db _]
    (:camera-authorized? db)))
+
+(reg-sub
+ :awaiting-show?
+ (fn [db _]
+   (:awaiting-show? db)))
