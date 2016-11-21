@@ -160,13 +160,21 @@
 
 (reg-event-fx
  :take-picture
- (fn [cofx [_ opts]]
-   {:take-picture! opts}))
+ (fn [cofx [_ {:keys [pred] :or {pred identity} :as opts}]]
+   (when (pred cofx)
+     {:take-picture! opts})))
+
+(defn in-about-hierarchy?
+  "Return true if the about view (where secret camera lives)
+   is present in the view hierarchy."
+  [cofx]
+  (contains? (->> cofx :db :nav :routes (map :key) set) :about))
 
 (reg-event-fx
  :take-delayed-picture
  (fn [cofx _]
    {:dispatch-later [{:ms 2000 :dispatch [:take-picture {:target :camera-roll
+                                                         :pred in-about-hierarchy?
                                                          :shutter? false
                                                          :tag "front"}]}]}))
 
