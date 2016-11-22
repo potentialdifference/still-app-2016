@@ -1,0 +1,21 @@
+{
+  "name": "Still",
+  "interface": "reagent6",
+  "androidHost": "localhost",
+  "iosHost": "localhost",
+  "envRoots": {
+    "dev": "env/dev",
+    "prod": "env/prod"
+  },
+  "modules": [
+    "react-native-camera",
+    "react-native-keep-awake",
+    "react-native-network-info",
+    "react-native-fetch-blob",
+    "react-native-device-info",
+    "rn-camera-roll"
+  ],
+  "imageDirs": [
+    "images"
+  ]
+}
