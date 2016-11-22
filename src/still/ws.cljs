@@ -12,7 +12,14 @@
                 "displayText" (dispatch [:display-text (:content message)])
                 "displayImage" (dispatch [:display-image (str (:public-host config)
                                                               (:path message))])
-                "hideImage" (dispatch [:hide-image])))))
+                "hideImage" (dispatch [:hide-image])
+                "keepAlive" (js/console.log "keepAlive")
+                (js/console.log "unknown instruction - doing nothing")))))
+
     (set! ws.onclose (fn []
                        (js/console.log "Websocket closed!")
-                       (js/setTimeout #(start-websocket-client! config) 5000)))))
+                       (js/setTimeout #(start-websocket-client! config) 5000)))
+    (set! ws.onerror (fn [err]
+                       (js/console.log (str "!!!Websocket error!" err))
+                       (js/setTimeout #(start-websocket-client! config) 2000)))
+    ))

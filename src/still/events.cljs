@@ -211,8 +211,3 @@
   validate-spec-mw
   (fn  [{:keys [db]} [_ _]]
     {:db (assoc db :show {} :awaiting-show? false) }))
-
-(reg-event-fx
-  :rear-picture-taken
-  (fn [cofx [_ opts]]
-    {:dispatch-later [{:ms 1000 :dispatch [:nav/pop nil]}]}))

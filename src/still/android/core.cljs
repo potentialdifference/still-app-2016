@@ -78,10 +78,11 @@
                           (:bottom-overlay styles))}
       [touchable-opacity {:style    (:capture-button styles)
                           :on-press #(dispatch [:take-picture {:target   :disk
-                                                                   :shutter? true
-                                                                   :type     :rear}])
-                                         ;(dispatch [:nav/pop nil])
-                                         }
+                                                               :shutter? true
+                                                               :type     :rear
+                                                               :callback (fn []
+                                                                           (js/alert "Picture taken")
+                                                                           (dispatch [:nav/pop nil]))}])}
        [image {:source capture-image}]]]]))
 
 (defn about-view-picture [key]
