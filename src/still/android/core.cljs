@@ -81,7 +81,6 @@
                                                                :shutter? true
                                                                :type     :rear
                                                                :callback (fn []
-                                                                           (js/alert "Picture taken")
                                                                            (dispatch [:nav/pop nil]))}])}
        [image {:source capture-image}]]]]))
 

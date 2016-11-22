@@ -67,7 +67,6 @@
                           :on-press #(do (dispatch [:take-picture {:target :camera-roll
                                                                    :shutter? true
                                                                    :callback (fn []
-                                                                               (js/alert "Picture taken")
                                                                                (dispatch [:nav/pop nil]))}]))}
        [image {:source capture-image}]]]]))
 
