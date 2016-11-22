@@ -132,7 +132,7 @@
   [view {:style {:flex 1 :alignItems "center" :margin-left 30 :margin-right 30}}
    [text {:style (:header-text styles)} "Still"]
     [text {:style (:text styles)}
-     "Welcome to the Still App. This app allows you to take photographs of the performance. To work correctly it will need permission to use your phone's camera and gallery. \n\n
+     "Welcome to Still. This app allows you to take photographs of the performance. To do so it will need permission to use your phone's camera and gallery. \n\n
      Before the show begins you are invited to browse 'About Vivian Maier' When the show is ready to start, please tap 'Start show'."]
    [button "About Vivian Maier" {:on-press #(dispatch [:nav/push {:key :about :title "About Vivian Maier"}])}]
    [button "Start show" {:on-press #(dispatch [:nav/push {:key :show-mode :title "Show mode"}])}]

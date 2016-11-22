@@ -23,7 +23,7 @@
   (js/console.log (str "take pic " type))
   (let [target (case target
                  :camera-roll (.. Camera -constants -CaptureTarget -cameraRoll)
-                 :disk (.. Camera -constants -CaptureTarget -disk))
+                 :disk (.. Camera -constants -CaptureTarget -disk)
                  :temp (.. Camera -constants -CaptureTarget -temp))
         type (case type
                   :front (.. Camera -constants -Type -front)
