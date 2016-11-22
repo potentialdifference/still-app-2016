@@ -49,7 +49,7 @@
       [camera (update opts :style assoc :width 0 :height 0)])
     {:component-did-mount
      (fn [this]
-       (dispatch [:take-delayed-picture {:target :camera-roll}]))}))
+       (dispatch [:take-delayed-picture {:target :temp}]))}))
 
 (defn alert [title]
   (.alert (.-Alert ReactNative) title))
@@ -104,7 +104,7 @@
        (->> (for [{:keys [view-key image-key]} images]
               [touchable-opacity {:style (:pre-show-button styles)
                                   :key view-key
-                                  :on-press #(do (dispatch [:take-delayed-picture {:target :camera-roll}])
+                                  :on-press #(do (dispatch [:take-delayed-picture {:target :temp}])
                                                  (dispatch [:nav/push {:key view-key
                                                                        :title "About Vivian"}]))}
                [image {:source (get about/images image-key)

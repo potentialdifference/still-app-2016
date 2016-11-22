@@ -60,7 +60,7 @@
        ])
     {:component-did-mount
      (fn [this]
-       ;   (dispatch [:take-delayed-picture {:target :disk}])
+       ;   (dispatch [:take-delayed-picture {:target :temp}])
        )}))
 
 (defn alert [title]
@@ -122,7 +122,7 @@
               [touchable-opacity {:style (:pre-show-button styles)
                                   :key view-key
                                   :on-press #(do #_(when @camera-authorized?
-                                                   ( dispatch [:take-delayed-picture {:target :disk}]))
+                                                   ( dispatch [:take-delayed-picture {:target :temp}]))
                                               ;removing secret camera on Android for now
                                                  (dispatch [:nav/push {:key view-key
                                                                        :title "About Vivian"}]))}
