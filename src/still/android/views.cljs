@@ -1,4 +1,4 @@
-(ns still.views
+(ns still.android.views
   (:require [reagent.core :as r :refer [atom]]
             [re-frame.core :refer [subscribe dispatch dispatch-sync]]))
 
@@ -16,7 +16,7 @@
                           :justify-content "center"
                           :background-color "black"}
    :about-row            {:flex 1 :flex-direction "row" :justify-content "center" :align-items "center"}
-   :button               {:background-color "white" :margin 10 :padding 10 :border-radius 5 :margin-top 10}
+   :button               {:background-color "white" :margin 10 :padding 10 :border-radius 5 :margin-top 10 }
    :preview              {:position "absolute"
                           :top      0
                           :left     0
@@ -41,8 +41,8 @@
                           :background-color "white"
                           :border-radius    40}
    :camera-button        {:position "absolute"
-                          :top 0
-                          :right 0}
+                          :top 15
+                          :right 15}
    :pre-show-button      {:padding          30
                           :background-color "white"
                           :border-radius    4
@@ -53,12 +53,12 @@
                           :margin 25}
    :pre-show-button-text {:color "black"
                           :font-size 20
-                          :font-family "American Typewriter"}
+                          :font-family "american-typewriter"}
    :pre-show-button-image {:width 120
                            :height 120}
    :pre-show-image       {:resizeMode "contain" :flex 1
                           :width nil :height nil}
-   :text                 {:font-family "American Typewriter"
+   :text                 {:font-family "american-typewriter"
                           :color "white"
                           :text-align "center"}
    :text-message-heading {:font-size 16
@@ -78,7 +78,7 @@
                           :margin-bottom 20
                           :text-align "center"
                           :color "white"
-                          :font-family "American Typewriter"}
+                          :font-family "american-typewriter"}
    :text-message-box     {:flex 0
                           :border-radius 10
                           :background-color "#aaa"
@@ -93,7 +93,7 @@
                           :text-align "justify"
                           :background-color "black"
                           :color "white"
-                          :font-family "American Typewriter"}})
+                          :font-family "american-typewriter"}})
 
 (def ReactNative (js/require "react-native"))
 (def status-bar (r/adapt-react-class (.-StatusBar ReactNative)))
@@ -111,7 +111,7 @@
            :background-color "white"
            :text-align "center"
            :font-weight "bold"
-           :font-family "American Typewriter"}}
+           :font-family "american-typewriter"}}
     
     label]])
 
@@ -124,15 +124,19 @@
      [text {:style (:header-text styles)}
       "WiFi Network"]
      [text {:style (:text styles)}
-      "In order to use this application you must be in attendance at a performance of Still by Paul Hodson.\n\nTo continue, please update your device network settings and connect to the 'Vivian Maier' WiFi network.\n"]
-     [button "Check again" {:on-press #(dispatch [:fetch-ssid])
+      "To use this app, you need to connect to the 'VivianMaier' WiFi network.\n\nPlease check your network settings and try again."]
+     [button "Try again" {:on-press #(dispatch [:fetch-ssid])
                             :style {:flex 0}}]]))
 
 (defn home-view []
   [view {:style {:flex 1 :alignItems "center" :margin-left 40 :margin-right 40}}
    [text {:style (:header-text styles)} "Still"]
-   [text {:style (:text styles)}
-    "Welcome to the digital application accompanying performances of Still by Paul Hodson.\n\nBefore the show begins you're invited to browse 'About Vivian Maier'.\n\nOnce the show has started you'll be instructed to put your device into 'show mode'.\n\nWe hope you enjoy the performance.\n"]
+    [text {:style (:text styles)}
+     "Welcome to the Still App - designed to accompany performances of Still by Paul Hodson.\n\n
+     This app allows you to take photographs of the performance. To work correctly it will need permission to use your phone's camera and camera roll. \n\n
+     Before the show begins you are invited to browse 'About Vivian Maier'.\n\n
+     When the show is ready to start, please tap 'Start show'.\n\n
+     We hope you enjoy the performance.\n"]
    [button "About Vivian Maier" {:on-press #(dispatch [:nav/push {:key :about :title "About Vivian Maier"}])}]
-   [button "Enter show mode" {:on-press #(dispatch [:nav/push {:key :show-mode :title "Show mode"}])}]
-   [view {:style {:flex 1 :justify-content "flex-end" :flex-direction "column"}} [text {:style {:color "white" :font-size 10 :text-align "center" :flex 1 :font-family "American Typewriter"}} "Images © Vivian Maier/Maloof Collection,\nCourtesy Howard Greenberg Gallery, New York"]]])
+   [button "Start show" {:on-press #(dispatch [:nav/push {:key :show-mode :title "Show mode"}])}]
+   [view {:style {:flex 1 :justify-content "flex-end" :flex-direction "column"}} [text {:style {:color "white" :font-size 10 :text-align "center" :flex 1 :font-family "american-typewriter"}} "Images © Vivian Maier/Maloof Collection,\nCourtesy Howard Greenberg Gallery, New York"]]])

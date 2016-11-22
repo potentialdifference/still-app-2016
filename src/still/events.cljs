@@ -42,12 +42,7 @@
 
 ;; -- Handlers --------------------------------------------------------------
 
-(reg-event-db
-  :initialize-db
-  validate-spec-mw
-  (fn [empty-db [_ route]]
-    (let [device-name (device-name)]
-      (app-db route device-name))))
+
 
 (reg-event-fx
  :initial-events
@@ -215,6 +210,9 @@
   :hide-image
   validate-spec-mw
   (fn  [{:keys [db]} [_ _]]
-    {:db (assoc db :show {} :awaiting-show? false)
-     :buzz false}))
+    {:db (assoc db :show {} :awaiting-show? false) }))
 
+(reg-event-fx
+  :rear-picture-taken
+  (fn [cofx [_ opts]]
+    {:dispatch-later [{:ms 1000 :dispatch [:nav/pop nil]}]}))

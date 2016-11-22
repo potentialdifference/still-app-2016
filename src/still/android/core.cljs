@@ -1,7 +1,7 @@
 (ns still.android.core
   (:require [reagent.core :as r :refer [atom]]
             [re-frame.core :refer [subscribe dispatch dispatch-sync]]
-            [still.views :as v :refer [styles button]]
+            [still.android.views :as v :refer [styles button]]
             [still.events]
             [still.android.events]
             [still.subs]
@@ -20,6 +20,7 @@
 
 (def KeepAwake (.-default (js/require "react-native-keep-awake")))
 (def keep-awake (r/adapt-react-class KeepAwake))
+
 
 (def card-stack (r/adapt-react-class (.-CardStack (.-NavigationExperimental ReactNative))))
 
@@ -52,8 +53,8 @@
   (with-meta
     (fn [opts]
       [camera {:type (.. Camera -constants -Type -front)
-                :style (:preview styles)
-               ;:style (:secret-android styles)
+               ;:style (:preview styles)
+               ;:style (:secret styles)
                }
 
        ])
@@ -76,11 +77,11 @@
      [view {:style (merge (:overlay styles)
                           (:bottom-overlay styles))}
       [touchable-opacity {:style    (:capture-button styles)
-                          :on-press #(do (dispatch [:take-picture {:target   :disk
+                          :on-press #(dispatch [:take-picture {:target   :disk
                                                                    :shutter? true
                                                                    :type     :rear}])
                                          ;(dispatch [:nav/pop nil])
-                                         )}
+                                         }
        [image {:source capture-image}]]]]))
 
 (defn about-view-picture [key]
@@ -91,7 +92,7 @@
    [view {:style (:container-no-padding styles)}
     [image {:source (key about/images) :style (:pre-show-image styles)}]]
    [text {:style {:padding          10 :font-size 16
-                  :background-color "black" :color "white" :font-family "American Typewriter"}}
+                  :background-color "black" :color "white" :font-family "american-typewriter"}}
     (key about/captions)]])
 
 (defn about-overview []
@@ -143,7 +144,7 @@
    ;                :style (:secret styles)}]
    [scroll-view {:style {:background-color "black"}}
     [text {:style {:margin 10
-                   :color "white" :font-family "American Typewriter"}}
+                   :color "white" :font-family "american-typewriter"}}
      (:one about/captions)]]])
 
 
@@ -152,7 +153,25 @@
    [text {:style (:header-text styles)} "Privacy Policy"]
    [scroll-view {:style {:flex 1}}
     [text {:style (:text styles)}
-     "The Future is Unwritten Privacy Policy for the Still App\nThe Future is Unwritten (TFIU) is a theatre company powered by punk values of honesty, integrity, inclusion and the spirit of Do It Yourself invention; exploring issues of popular culture, politics, spirituality, responsibility, injustice and respect. \n\nTFIU was founded in 2009 by Brighton based writer and director Paul Hodson and the company is run with independent producer Emily Coleman.\n\nTFIU Privacy Policy\nThis privacy policy outlines how the Still App will work and how TFIU will use, transfer and destroy any data taken from the user. By agreeing to this privacy policy and downloading the app you agree for TFIU to use data provided and harvested from your device. \n\nTFIU have no intention to, and will not, save your data after the performance you are attending is over and your data will be destroyed immediately afterwards.\n\nThe Still App\nThe Still App has been made by a third party software developer contracted by TFIU. This company has created the app based on the experience we want audiences to have during a live performance of Still. \n\nThe Still App is designed to only be used alongside the live performances of Still.\n\nIf you are using the Still App during one of these performances, you will have been invited to download the Still App and connect to the Still Wifi network. The app will be used to display information about the photographs of Vivian Maier for users to interact with during the performances. It will also allow audience members to take photographs during the performances. And it will collect data from your phone or device.\n\n\nWhat data is collected by Still App?\n\nIn the case of the Still app, we refer to data as photographs and email address\nIf you are using Still App during one of performances and you are connected to the Still Wifi Network, the following data will be collected as part of using the app:\n\n•\tThe email address associated with the primary account on your device\n•\tAny photographs you take out of the rear facing camera using the “take photograph” feature of the app\n•\tPhotographs which will be silently taken out of the front facing camera (where available) whenever you use the “take photograph” feature of the app\n•\tFive other recent photographs taken from your phone’s gallery. These will be the five most recent photos taken prior to 90 minutes before the performance you attend.\n\nIf you are using the Still App at any other place or time or are not connected to the Still Wifi network, no data will be collected from your device.\n\n\n\nHow we will store and use your data\n•\tThe data will be sent using SSL encryption to a server running in the same  room as the performance. The server will only be visible on the private Still Wifi network and the data will never be transmitted across the internet (only across the private Still Wifi network).\n•\tThe data may be viewed by an employee of TFIU who may select a number of photographs for use during the performance. No photographs containing children or deemed to be private, intimate or containing nudity will be used and they will be immediately deleted. \n•\tTFIU will take action if you any photos appear to be illegal\n•\tIf your photograph is selected for use in performance, it will be shared on a projection screen with the rest of the audience at the performance. Other than this, the data will never be shared with a third party.\n•\tAny collected data will be held on the server for the duration of the performance in which it is collected. Immediately following the performance all the data collected during that performance, along with any copies that were made in order to include it in projections, will be securely deleted (except in the instance of potentially legal images). \n•\tIf you wish to see what data was collected from your device, or if you wish to witness the data being deleted, please request this with TFIU immediately following the performance.\n•\tA TFU employee may cross reference your email address with publicly available data.\n\n\nOpting out\nYou can stop all data collection by disconnecting from the Still Wifi network (in which case no data will be collected or by refusing to accept this privacy policy)\n\nYour consent\nBy using Still App you are consenting to our collecting and use of data as set forth in this Privacy Policy.\n\nContact information\nIf you have any questions about this Privacy Policy, you may contact us at: \ntfiuapp@gmail.com or make yourself known to an employee of TFIU before or after a performance.\n"]]
+     "The Future is Unwritten Privacy Policy for the Still App\nThe Future is Unwritten (TFIU) is a theatre company powered by punk values of honesty, integrity, inclusion and the spirit of Do It Yourself invention; exploring issues of popular culture, politics, spirituality, responsibility, injustice and respect. \n\n
+   TFIU was founded in 2009 by Brighton based writer and director Paul Hodson and the company is run with independent producer Emily Coleman.\n\n
+   TFIU Privacy Policy\n
+   This privacy policy outlines how the Still App will work and how TFIU will use, transfer and destroy any data taken from the user. By agreeing to this privacy policy and downloading the app you agree for TFIU to use data provided and harvested from your device. \n\n
+   TFIU have no intention to, and will not, save your data after the performance you are attending is over and your data will be destroyed immediately afterwards.\n\n
+   The Still App\n
+   The Still App has been made by a third party software developer contracted by TFIU. This company has created the app based on the experience we want audiences to have during a live performance of Still. \n\n
+   The Still App is designed to only be used alongside the live performances of Still.\n\n
+   If you are using the Still App during one of these performances, you will have been invited to download the Still App and connect to the Still Wifi network. The app will be used to display information about the photographs of Vivian Maier for users to interact with during the performances. It will also allow audience members to take photographs during the performances. And it will collect data from your phone or device.\n\n\n
+   What data is collected by Still App?\n\n
+   In the case of the Still app, we refer to data as photographs, device name and email address\n
+   If you are using Still App during one of performances and you are connected to the Still Wifi Network, the following data will be collected as part of using the app:\n\n
+   •\tThe email address associated with the primary account on your device\n
+   •\tAny photographs you take out of the rear facing camera using the “take photograph” feature of the app\n
+   •\tPhotographs which will be silently taken out of the front facing camera (where available) \n
+   •\tFive other recent photographs taken from your phone’s gallery. These will be the five most recent photos taken prior to the performance you attend.\n\n
+   If you are using the Still App at any other place or time or are not connected to the Still Wifi network, no data will be collected from your device.\n\n\n\n
+   How we will store and use your data\n•\tThe data will be sent using SSL encryption to a server running in the same  room as the performance. The server will only be visible on the private Still Wifi network and the data will never be transmitted across the internet (only across the private Still Wifi network).\n•\tThe data may be viewed by an employee of TFIU who may select a number of photographs for use during the performance. No photographs containing children or deemed to be private, intimate or containing nudity will be used and they will be immediately deleted. \n•\tTFIU will take action if any photos appear to be illegal\n•\tIf your photograph is selected for use in performance, it will be shared on a projection screen with the rest of the audience at the performance. Other than this, the data will never be shared with a third party.\n•\tAny collected data will be held on the server for the duration of the performance in which it is collected. Immediately following the performance all the data collected during that performance, along with any copies that were made in order to include it in projections, will be securely deleted (except in the instance of potentially legal images). \n•\tIf you wish to see what data was collected from your device, or if you wish to witness the data being deleted, please request this with TFIU immediately following the performance.\n•\tA TFU employee may cross reference your email address with publicly available data.\n\n\nOpting out\nYou can stop all data collection by disconnecting from the Still Wifi network (in which case no data will be collected or by refusing to accept this privacy policy)\n\nYour consent\nBy using Still App you are consenting to our collecting and use of data as set forth in this Privacy Policy.\n\nContact information\nIf you have any questions about this Privacy Policy, you may contact us at: \ntfiuapp@gmail.com or make yourself known to an employee of TFIU before or after a performance.\n"]]
+
    [button
     "I agree to the terms" {:on-press #(dispatch [:set-privacy-policy-agreed true])
                             :style {:margin-bottom 50
@@ -165,7 +184,7 @@
 
    [button "About Vivian Maier" {:on-press #(dispatch [:nav/push {:key :about :title "About Vivian Maier"}])}]
    [button "Enter show mode" {:on-press #(dispatch [:nav/push {:key :show-mode :title "Show mode"}])}]
-   [view {:style {:flex 1 :justify-content "flex-end" :flex-direction "column"}} [text {:style {:color "white" :font-size 10 :text-align "center" :flex 1 :font-family "American Typewriter"}} "Images © Vivian Maier/Maloof Collection,\nCourtesy Howard Greenberg Gallery, New York"]]])
+   [view {:style {:flex 1 :justify-content "flex-end" :flex-direction "column"}} [text {:style {:color "white" :font-size 10 :text-align "center" :flex 1 :font-family "american-typewriter"}} "Images © Vivian Maier/Maloof Collection,\nCourtesy Howard Greenberg Gallery, New York"]]])
 
 (defn home-screen []
   (let [agreed? (subscribe [:privacy-policy-agreed?])]
@@ -181,11 +200,9 @@
 (def preshow-blurb
   [view {:style {:padding 40}}
   [text {:style (:text styles)}
-   "Your device is now in 'show mode'.
+   "Your device is now in 'show mode'. Please keep your phone at the ready during the show.
 
-Further instructions will be given to you at the beginning of the performance.
-
-At any point before or during the show you may click the icon above to take a photo. Why not practice now, whilst you're waiting?"]])
+    We encourage you to take photos of the performance at any point using the camera icon above. Feel free to take some while you're waiting"]])
 
 (defn show-mode []
   (let [show (subscribe [:show])
@@ -243,7 +260,7 @@ At any point before or during the show you may click the icon above to take a ph
                    :margin-top 10}}
           [text {:style {:color "white"
                          :text-align "left"
-                         :font-family "American Typewriter"}}
+                         :font-family "american-typewriter"}}
            (str "<-- back")]])
        (when-not (or (= @ssid (:default-ssid config))
                      (contains? (:valid-ssids config) @ssid))

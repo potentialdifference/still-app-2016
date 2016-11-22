@@ -1,7 +1,7 @@
 package uk.org.potentialdifference.stillapp;
 
 import com.facebook.react.ReactActivity;
-import com.learnium.RNDeviceInfo.RNDeviceInfo;
+import com.burnweb.rnpermissions.RNPermissionsPackage;
 
 public class MainActivity extends ReactActivity {
 
@@ -12,5 +12,11 @@ public class MainActivity extends ReactActivity {
     @Override
     protected String getMainComponentName() {
         return "Still";
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        RNPermissionsPackage.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

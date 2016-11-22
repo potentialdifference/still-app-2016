@@ -1,5 +1,6 @@
 package uk.org.potentialdifference.stillapp;
 
+import com.burnweb.rnpermissions.RNPermissionsPackage;
 import android.app.Application;
 import android.util.Log;
 
@@ -35,7 +36,8 @@ public class MainApplication extends Application implements ReactApplication {
               new RNNetworkInfoPackage(),
               new KCKeepAwakePackage(),
               new RNDeviceInfo(),
-              new CameraRollPackage()
+              new CameraRollPackage(),
+              new RNPermissionsPackage()
       );
     }
   };

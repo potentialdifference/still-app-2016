@@ -38,7 +38,7 @@
                   (do (dispatch [:queue-for-upload {:path (:path asset)
                                                 :tag tag}])
                       (dispatch [:nav/pop nil])))))
-        (catch (fn [rejection]
+        (catch (fn [_]
                  )))))
 
 (defn fetch-album [{:keys [query on-success on-error]}]
