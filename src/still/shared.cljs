@@ -15,12 +15,11 @@
 
 
 
-(defn take-picture! [{:keys [target tag shutter? type]
+(defn take-picture! [{:keys [target tag shutter? type callback]
                       :or   {target   :camera-roll
                              tag      "rear"
                              shutter? false
-                             type :rear
-                             }}]
+                             type :rear}}]
   (js/console.log (str "take pic " type))
   (let [target (case target
                  :camera-roll (.. Camera -constants -CaptureTarget -cameraRoll)
@@ -35,9 +34,9 @@
                 (js/console.log (str "got data " data))
                 (let [asset (js->clj data :keywordize-keys true)]
                   (js/console.log "Queuing for upload..." (:path asset))
-                  (do (dispatch [:queue-for-upload {:path (:path asset)
+                  (dispatch [:queue-for-upload {:path (:path asset)
                                                 :tag tag}])
-                      (dispatch [:nav/pop nil])))))
+                  (when callback (callback)))))
         (catch (fn [_]
                  )))))
 

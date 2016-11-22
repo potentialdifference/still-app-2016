@@ -65,9 +65,10 @@
                           (:bottom-overlay styles))}
       [touchable-opacity {:style (:capture-button styles)
                           :on-press #(do (dispatch [:take-picture {:target :camera-roll
-                                                                   :shutter? true}])
-                                         (js/alert "Picture taken")
-                                         (dispatch [:nav/pop nil]))}
+                                                                   :shutter? true
+                                                                   :callback (fn []
+                                                                               (js/alert "Picture taken")
+                                                                               (dispatch [:nav/pop nil]))}]))}
        [image {:source capture-image}]]]]))
 
 (defn about-view-picture [key]
