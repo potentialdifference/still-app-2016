@@ -20,6 +20,5 @@
                        (js/console.log "Websocket closed!")
                        (js/setTimeout #(start-websocket-client! config) 5000)))
     (set! ws.onerror (fn [err]
-                       (js/console.log (str "!!!Websocket error!" err))
-                       (js/setTimeout #(start-websocket-client! config) 2000)))
-    ))
+                       (js/console.log (str "!!!Websocket error!" (.message  err)))
+                       ))))

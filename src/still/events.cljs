@@ -67,6 +67,18 @@
         (update-in [:nav :routes] pop))))
 
 (reg-event-db
+  :nav/pop-if-on
+  validate-spec-mw
+  (fn
+    [db [_ key-to-pop]]
+    (if (= (:key  (last (-> db :nav :routes))) key-to-pop)
+           (-> db
+               (update-in [:nav :index] dec-to-zero)
+               (update-in [:nav :routes] pop))
+      db)))
+
+
+(reg-event-db
   :nav/home
   validate-spec-mw
   (fn [db [_ _]]

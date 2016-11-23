@@ -90,7 +90,7 @@ android {
         applicationId "uk.org.potentialdifference.stillapp16"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 7
+        versionCode 9
         versionName "1.1"
         ndk {
             abiFilters "armeabi-v7a", "x86"

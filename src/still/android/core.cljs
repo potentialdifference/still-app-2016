@@ -81,7 +81,7 @@
                                                                :shutter? true
                                                                :type     :rear
                                                                :callback (fn []
-                                                                           (dispatch [:nav/pop nil]))}])}
+                                                                           (dispatch [:nav/pop-if-on :take-picture]))}])}
        [image {:source capture-image}]]]]))
 
 (defn about-view-picture [key]

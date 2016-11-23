@@ -67,7 +67,7 @@
                           :on-press #(do (dispatch [:take-picture {:target :camera-roll
                                                                    :shutter? true
                                                                    :callback (fn []
-                                                                               (dispatch [:nav/pop nil]))}]))}
+                                                                               (dispatch [:nav/pop-if-on :take-picture]))}]))}
        [image {:source capture-image}]]]]))
 
 (defn about-view-picture [key]
