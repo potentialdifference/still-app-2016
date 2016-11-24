@@ -66,5 +66,5 @@
                        (str/replace device-name #"@.+$" "")
                        device-name)
           content (str/replace content "{name}" users-name)]
-      {:db   (assoc db :show {:message-content content})
+      {:db   (assoc db :show {:message-content content} :awaiting-show? false)
        :buzz true})))

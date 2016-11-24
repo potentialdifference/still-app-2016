@@ -222,4 +222,4 @@
   :hide-image
   validate-spec-mw
   (fn  [{:keys [db]} [_ _]]
-    {:db (assoc db :show {} :awaiting-show? false) }))
+    {:db (assoc db :show {} :awaiting-show? false)}))
