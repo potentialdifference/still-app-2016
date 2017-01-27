@@ -84,6 +84,14 @@
                                                                            (dispatch [:nav/pop-if-on :take-picture]))}])}
        [image {:source capture-image}]]]]))
 
+(defn preview-picture [path]
+  [view {:style (:container styles)}]
+  [status-bar {:animated true :hidden true}]
+  [view {:style (:container-no-padding styles)}
+   [touchable-opacity {:on-press #(dispatch [:nav/pop nil])}
+                                 [image {:source path }]]] )
+
+
 (defn about-view-picture [key]
 
   [view {:style {:flex 1 :background-color "black" :justify-content "center" }}
@@ -223,7 +231,6 @@
                         :align-items "center"
                         :justify-content "center")}
 
-         [keep-awake] ;; Ensure screen doesn't sleep
          (when image-uri
            [image {:source {:uri image-uri}
                    :style {:width 400 :height 600
@@ -312,6 +319,7 @@
                                   :title "Home"}])
   (start-websocket-client! config)
   (dispatch [:initial-events])
+  ((.-activate KeepAwake))                                  ;keep the screen awake
   (.registerComponent app-registry "Still" #(r/reactify-component app-root)))
 
 

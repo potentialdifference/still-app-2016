@@ -187,8 +187,7 @@
                                :flex 1
                                :align-items "center"
                                :justify-content "center")}
-         
-           [keep-awake] ;; Ensure screen doesn't sleep
+
            (when image-uri
              [image {:source {:uri image-uri}
                      :style {:width 400 :height 600
@@ -275,4 +274,5 @@
                                   :title "Home"}])
   (start-websocket-client! config)
   (dispatch [:initial-events])
+  ((.-activate KeepAwake))
   (.registerComponent app-registry "Still" #(r/reactify-component app-root)))

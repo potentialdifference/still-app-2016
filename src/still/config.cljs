@@ -1,7 +1,7 @@
 (ns still.config)
 
 (def dev-ip
-  "192.168.0.17")
+  "192.168.0.8")
 
 (def prod-ip
   "192.168.2.25")
@@ -22,7 +22,7 @@
    :default-ssid "FETCHING"
    :auth-token "j2GY21Djms5pqfH2"})
 
-(def env prod)
+(def env dev)
 
 (def config
   (merge env {:upload-url (str (:private-host env) "/private")}))
