@@ -254,7 +254,9 @@
          "about-view-6" [about-view-picture :six])))))
 
 (defn valid-ssid? [ssid]
-  (or (= (:default-ssid config) ssid)
+  ;danger - remove me!
+  true
+  #_(or (= (:default-ssid config) ssid)
       (contains? (:valid-ssids config) ssid)))
 
 (defn app-root []
