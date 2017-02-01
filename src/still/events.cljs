@@ -230,10 +230,10 @@
   validate-spec-mw
   (fn  [{:keys [db]} [_ _]]
     {:db (assoc db :show {} :awaiting-show? false)}))
-(reg-event-db
+
+(reg-event-fx
   :generate-notification
-  validate-spec-mw
-  (fn [db [_ message]]
-    (push-notify message)
-    db))
+  (fn [world [_ message]]
+    (js/console.log "geterate notification " message)
+    (push-notify message)))
 
