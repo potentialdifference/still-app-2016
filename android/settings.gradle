@@ -15,3 +15,5 @@ include ':rn-camera-roll'
 project(':rn-camera-roll').projectDir = new File(settingsDir, '../node_modules/rn-camera-roll/android')
 include ':RNPermissionsModule', ':app'
 project(':RNPermissionsModule').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-android-permissions/android')
+include ':react-native-push-notification'
+project(':react-native-push-notification').projectDir = file('../node_modules/react-native-push-notification/android')

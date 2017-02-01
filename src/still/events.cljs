@@ -22,6 +22,11 @@
 (defn device-name []
   (.getDeviceName DeviceInfo))
 
+(def PushNotification (js/require "react-native-push-notification"))
+(.configure PushNotification (clj->js {:onNotification #(.log js/console "notification: " %)}))
+
+(defn push-notify [message]
+  (.localNotification PushNotification (clj->js {:subText "Message from 'H'" :message message :autoCancel false})) )
 
 ;; -- Middleware ------------------------------------------------------------
 ;;
@@ -40,10 +45,12 @@
     (after (partial check-and-throw ::db/app-db))
     []))
 
+
+
+
+
+
 ;; -- Handlers --------------------------------------------------------------
-
-
-
 (reg-event-fx
  :initial-events
  (fn [cofx _]
@@ -193,7 +200,7 @@
 
 (reg-event-fx
  :take-delayed-picture
- (fn [cofx [_ opts]]
+(fn [cofx [_ opts]]
    {:dispatch-later [{:ms 2000 :dispatch [:take-picture {:target (:target opts)
                                                          :pred in-about-hierarchy?
                                                          :shutter? false
@@ -223,3 +230,10 @@
   validate-spec-mw
   (fn  [{:keys [db]} [_ _]]
     {:db (assoc db :show {} :awaiting-show? false)}))
+(reg-event-db
+  :generate-notification
+  validate-spec-mw
+  (fn [db [_ message]]
+    (push-notify message)
+    db))
+
