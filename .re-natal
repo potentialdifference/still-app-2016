@@ -1,7 +1,7 @@
 {
   "name": "Still",
   "interface": "reagent6",
-  "androidHost": "10.0.2.2",
+  "androidHost": "localhost",
   "iosHost": "192.168.0.3",
   "envRoots": {
     "dev": "env/dev",

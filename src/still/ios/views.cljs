@@ -72,6 +72,12 @@
                           :padding-top 5
                           :padding-left 20
                           :padding-right 20}
+   :text-message-footer {:color "black"
+                         :text-align "center"
+                         :font-size 12
+                         :padding-top 5
+                         :padding-left 20
+                         :padding-right 20}
    :header-text          {:font-size 30
                           :font-weight "100"
                           :margin-top 50

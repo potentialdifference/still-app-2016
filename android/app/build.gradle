@@ -135,7 +135,7 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-android-permissions')
+
     compile project(':react-native-fetch-blob')
     compile project(':react-native-device-info')
     compile project(':react-native-keep-awake')
@@ -143,7 +143,6 @@ dependencies {
     compile project(':react-native-device-info')
     compile project(':react-native-camera')
     compile project(':rn-camera-roll')
-    compile project(':RNPermissionsModule')
     compile project(':react-native-push-notification')
     compile fileTree(dir: "libs", include: ["*.jar"])
     compile "com.android.support:appcompat-v7:23.0.1"

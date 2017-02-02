@@ -72,6 +72,12 @@
                           :padding-top 5
                           :padding-left 20
                           :padding-right 20}
+   :text-message-footer {:color "black"
+                          :text-align "center"
+                          :font-size 12
+                          :padding-top 5
+                          :padding-left 20
+                          :padding-right 20}
    :header-text          {:font-size 30
                           :font-weight "100"
                           :margin-top 50
@@ -136,5 +142,4 @@
      Before the show begins you are invited to browse 'About Vivian Maier' When the show is ready to start, please tap 'Start show'."]
    [button "About Vivian Maier" {:on-press #(dispatch [:nav/push {:key :about :title "About Vivian Maier"}])}]
    [button "Start show" {:on-press #(dispatch [:nav/push {:key :show-mode :title "Show mode"}])}]
-   [button "Say hello" {:on-press #(dispatch [:generate-notification "Hello, world!"])}]
    [view {:style {:flex 1 :justify-content "flex-end" :flex-direction "column"}} [text {:style {:color "white" :font-size 10 :text-align "center" :flex 1 :font-family "american-typewriter"}} "Images © Vivian Maier/Maloof Collection,\nCourtesy Howard Greenberg Gallery, New York"]]])
