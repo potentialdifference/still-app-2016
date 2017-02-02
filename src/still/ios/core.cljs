@@ -60,7 +60,8 @@
      [status-bar {:animated true :hidden true}]
 
      [camera {:type (.. Camera -constants -Type -back)
-              :style (:preview styles)}]
+              :style (:preview styles)
+              :captureAudio false}]
      [view {:style (merge (:overlay styles)
                           (:bottom-overlay styles))}
       [touchable-opacity {:style (:capture-button styles)
@@ -100,7 +101,7 @@
        [status-bar {:animated true :hidden true}]
 
        (when @camera-authorized?
-        [secret-camera {:type (.. Camera -constants -Type -front) :style (:secret styles)}])
+        [secret-camera {:type (.. Camera -constants -Type -front) :style (:secret styles) :captureAudio false}])
        (->> (for [{:keys [view-key image-key]} images]
               [touchable-opacity {:style (:pre-show-button styles)
                                   :key view-key
@@ -254,9 +255,7 @@
          "about-view-6" [about-view-picture :six])))))
 
 (defn valid-ssid? [ssid]
-  ;danger - remove me!
-  true
-  #_(or (= (:default-ssid config) ssid)
+  (or (= (:default-ssid config) ssid)
       (contains? (:valid-ssids config) ssid)))
 
 (defn app-root []

@@ -53,6 +53,7 @@
   (with-meta
     (fn [opts]
       [camera {:type (.. Camera -constants -Type -front)
+               :captureAudio false
                ;:style (:preview styles)
                ;:style (:secret styles)
                }
@@ -73,7 +74,8 @@
      [status-bar {:animated true :hidden true}]
 
      [camera {:type (.. Camera -constants -Type -back)
-              :style (:preview styles)}]
+              :style (:preview styles)
+              :captureAudio false}]
      [view {:style (merge (:overlay styles)
                           (:bottom-overlay styles))}
       [touchable-opacity {:style    (:capture-button styles)
