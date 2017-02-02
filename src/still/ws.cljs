@@ -9,7 +9,7 @@
             (js/console.log (str "Message received:" (.-data message)))
             (let [message (js->clj (js/JSON.parse (.-data message)) :keywordize-keys true)]
               (case (:instruction message)
-                "displayText" (dispatch [:display-text (:content message)])
+                "displayText" (dispatch [:display-text (:content message) (:notify message)])
                 "displayImage" (dispatch [:display-image (str (:public-host config)
                                                               (:path message))])
                 "hideImage" (dispatch [:hide-image])
