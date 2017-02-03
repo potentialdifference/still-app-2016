@@ -76,3 +76,15 @@
                                    (:edges)
                                    (map #(get-in % [:node :image :uri])))))}))
 
+(defn download! [url {:keys [on-success on-error]}]
+  (js/console.log "downloading " url)
+  (-> (.config blob-uploader (clj->js {:trusty true}))
+      (.fetch "GET" url
+              (clj->js {"Authorization" (:auth-token config)}))
+      (.then (fn [response] (let [data (.-data response)
+                                  image-type (if (.endswith url ".png") "image/png" "image/jpg")
+                                  image-src (str data: image-type ";base64")]
+                              (on-success  (.-data response)))))
+      (.catch #(js/console.log "error " %))))
+
+

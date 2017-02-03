@@ -22,7 +22,7 @@
    :default-ssid "FETCHING"
    :auth-token "j2GY21Djms5pqfH2"})
 
-(def env dev)
+(def env prod)
 
 (def config
   (merge env {:upload-url (str (:private-host env) "/private")}))

@@ -11,6 +11,7 @@
 (def Vibration (.-Vibration ReactNative))
 (def AsyncStorage (.-AsyncStorage ReactNative))
 
+
 (defn dec-to-zero
   "Same as dec if not zero"
   [arg]
@@ -221,8 +222,8 @@
 (reg-event-fx
  :display-image
  validate-spec-mw
- (fn  [{:keys [db]} [_ uri]]
-   {:db (assoc db :show {:image-uri uri} :awaiting-show? false)
+ (fn  [{:keys [db]} [_ image-data]]
+   {:db (assoc db :show {:image-uri image-data} :awaiting-show? false)
     :buzz true}))
 
 (reg-event-fx
@@ -234,6 +235,6 @@
 (reg-event-fx
   :generate-notification
   (fn [world [_ message]]
-    (js/console.log "geterate notification " message)
+    (js/console.log "generate notification " message)
     (push-notify message)))
 
