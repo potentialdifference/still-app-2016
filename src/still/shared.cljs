@@ -82,9 +82,9 @@
       (.fetch "GET" url
               (clj->js {"Authorization" (:auth-token config)}))
       (.then (fn [response] (let [data (.-data response)
-                                  image-type (if (.endswith url ".png") "image/png" "image/jpg")
-                                  image-src (str data: image-type ";base64")]
-                              (on-success  (.-data response)))))
+                                  image-type (if (.endsWith url ".png") "image/png" "image/jpg")
+                                  image-src (str "data:" image-type ";base64," data)]
+                              (on-success  image-src))))
       (.catch #(js/console.log "error " %))))
 
 

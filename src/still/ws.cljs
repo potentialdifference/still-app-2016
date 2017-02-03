@@ -13,7 +13,7 @@
 
                 "displayText" (dispatch [:display-text (:content message) (:notify message)])
                 ;"displayImage"(dispatch [:display-image (str (:public-host config)(:path message))])
-                "displayImage"(let [url (str (:public-host config) (:path message))]
+                "displayImage"(let [url (str (:private-host config) (:path message))]
                                 (shared/download! url {:on-success #(dispatch [:display-image %])
                                                        :on-error #(js/console.log "error " %)}))
                 "hideImage" (dispatch [:hide-image])
