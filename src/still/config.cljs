@@ -4,7 +4,7 @@
   "192.168.0.8")
 
 (def prod-ip
-  "192.168.2.25")
+  "alcorithm.co.uk")
 
 (def dev
   {:private-host (str "https://" dev-ip ":8443")
