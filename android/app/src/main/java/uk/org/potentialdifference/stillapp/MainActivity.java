@@ -1,7 +1,7 @@
 package uk.org.potentialdifference.stillapp;
 
 import com.facebook.react.ReactActivity;
-import com.burnweb.rnpermissions.RNPermissionsPackage;
+
 
 public class MainActivity extends ReactActivity {
 
@@ -16,7 +16,7 @@ public class MainActivity extends ReactActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        RNPermissionsPackage.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

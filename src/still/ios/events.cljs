@@ -17,6 +17,13 @@
 (defn device-name []
   (.getDeviceName DeviceInfo))
 
+(def PushNotification (js/require "react-native-push-notification"))
+(.configure PushNotification (clj->js {:onNotification #(.log js/console "notification: " %)}))
+
+(defn push-notify [message]
+  (.localNotification PushNotification (clj->js {:subText "Message from 'H'" :message message :autoCancel false})) )
+
+
 (reg-event-db
   :initialize-db
   validate-spec-mw
@@ -53,13 +60,21 @@
 (reg-event-fx
   :display-text
   validate-spec-mw
-  (fn [{:keys [db]} [_ content]]
+  (fn [{:keys [db]} [_ content notify]]
     (let [device-name (:device-name db)
-          users-name (if (str/includes? device-name "’")
-                       (str/replace device-name #"’.+$" "")
+          users-name (if (str/includes? device-name "ï¿½")
+                       (str/replace device-name #"ï¿½.+$" "")
                        (if (str/includes? device-name "'")
                          (str/replace device-name #"'.+$" "")
                           device-name))
-          content (str/replace content "{name}" users-name)]
-      {:db (assoc db :show {:message-content content})
-       :buzz true})))
+          content (str/replace content "{name}" users-name)
+          value-map {:db   (assoc db :show {:message-content content} :awaiting-show? false)
+                                                                       :buzz true}]
+      (if notify (assoc value-map :notify {:message content}) value-map))))
+
+(reg-fx
+  :notify
+  (fn [world [_ _]]
+    (let [message (:message world)]
+      (js/console.log "notify: " )
+      (push-notify message))))

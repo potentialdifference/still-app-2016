@@ -14,14 +14,13 @@
 (defn account-emails []
   (.getAccountEmails DeviceInfo))
 
-;(def permissions ["android.permission.CAMERA" "android.permission.WRITE_EXTERNAL_STORAGE android.permission.GET_ACCOUNTS" "android.permission.READ_EXTERNAL_STORAGE" "android.permission.READ_PHONE_STATE"]  )
+(def PushNotification (js/require "react-native-push-notification"))
+(.configure PushNotification (clj->js {:onNotification #(.log js/console "notification: " %)}))
 
-#_(defn request-camera! [callback]
-  (request-permission "android.permission.CAMERA"
-                      (then fn [granted-cam] (request-permission "android.permission.WRITE_EXTERNAL_STORAGE"
-                                                                 (then #(if granted-cam
-                                                                         (callback %)
-                                                                         (callback false)))))))
+(defn push-notify [message]
+  (.localNotification PushNotification (clj->js {:subText "Message from 'H'" :message message :autoCancel false})) )
+
+
 
 (reg-event-db
   :initialize-db
@@ -60,11 +59,19 @@
 (reg-event-fx
   :display-text
   validate-spec-mw
-  (fn [{:keys [db]} [_ content]]
+  (fn [{:keys [db]} [_ content notify]]
     (let [device-name (:device-name db)
           users-name (if (str/includes? device-name "@")
                        (str/replace device-name #"@.+$" "")
                        device-name)
-          content (str/replace content "{name}" users-name)]
-      {:db   (assoc db :show {:message-content content})
-       :buzz true})))
+          content (str/replace content "{name}" users-name)
+          value-map {:db   (assoc db :show {:message-content content} :awaiting-show? false)
+                     :buzz true}]
+      (if notify (assoc value-map :notify {:message content}) value-map))))
+
+(reg-fx
+  :notify
+  (fn [world [_ _]]
+    (let [message (:message world)]
+      (js/console.log "notify: " )
+      (push-notify message))))

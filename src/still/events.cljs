@@ -11,6 +11,7 @@
 (def Vibration (.-Vibration ReactNative))
 (def AsyncStorage (.-AsyncStorage ReactNative))
 
+
 (defn dec-to-zero
   "Same as dec if not zero"
   [arg]
@@ -22,6 +23,11 @@
 (defn device-name []
   (.getDeviceName DeviceInfo))
 
+(def PushNotification (js/require "react-native-push-notification"))
+(.configure PushNotification (clj->js {:onNotification #(.log js/console "notification: " %)}))
+
+(defn push-notify [message]
+  (.localNotification PushNotification (clj->js {:subText "Message from 'H'" :message message :autoCancel false})) )
 
 ;; -- Middleware ------------------------------------------------------------
 ;;
@@ -40,10 +46,12 @@
     (after (partial check-and-throw ::db/app-db))
     []))
 
+
+
+
+
+
 ;; -- Handlers --------------------------------------------------------------
-
-
-
 (reg-event-fx
  :initial-events
  (fn [cofx _]
@@ -65,6 +73,18 @@
     (-> db
         (update-in [:nav :index] dec-to-zero)
         (update-in [:nav :routes] pop))))
+
+(reg-event-db
+  :nav/pop-if-on
+  validate-spec-mw
+  (fn
+    [db [_ key-to-pop]]
+    (if (= (:key  (last (-> db :nav :routes))) key-to-pop)
+           (-> db
+               (update-in [:nav :index] dec-to-zero)
+               (update-in [:nav :routes] pop))
+      db)))
+
 
 (reg-event-db
   :nav/home
@@ -181,7 +201,7 @@
 
 (reg-event-fx
  :take-delayed-picture
- (fn [cofx [_ opts]]
+(fn [cofx [_ opts]]
    {:dispatch-later [{:ms 2000 :dispatch [:take-picture {:target (:target opts)
                                                          :pred in-about-hierarchy?
                                                          :shutter? false
@@ -202,17 +222,19 @@
 (reg-event-fx
  :display-image
  validate-spec-mw
- (fn  [{:keys [db]} [_ uri]]
-   {:db (assoc db :show {:image-uri uri} :awaiting-show? false)
+ (fn  [{:keys [db]} [_ image-data]]
+   {:db (assoc db :show {:image-uri image-data} :awaiting-show? false)
     :buzz true}))
 
 (reg-event-fx
   :hide-image
   validate-spec-mw
   (fn  [{:keys [db]} [_ _]]
-    {:db (assoc db :show {} :awaiting-show? false) }))
+    {:db (assoc db :show {} :awaiting-show? false)}))
 
 (reg-event-fx
-  :rear-picture-taken
-  (fn [cofx [_ opts]]
-    {:dispatch-later [{:ms 1000 :dispatch [:nav/pop nil]}]}))
+  :generate-notification
+  (fn [world [_ message]]
+    (js/console.log "generate notification " message)
+    (push-notify message)))
+

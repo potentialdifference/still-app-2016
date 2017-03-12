@@ -53,6 +53,7 @@
   (with-meta
     (fn [opts]
       [camera {:type (.. Camera -constants -Type -front)
+               :captureAudio false
                ;:style (:preview styles)
                ;:style (:secret styles)
                }
@@ -60,7 +61,7 @@
        ])
     {:component-did-mount
      (fn [this]
-       ;   (dispatch [:take-delayed-picture {:target :disk}])
+       ;   (dispatch [:take-delayed-picture {:target :temp}])
        )}))
 
 (defn alert [title]
@@ -73,16 +74,25 @@
      [status-bar {:animated true :hidden true}]
 
      [camera {:type (.. Camera -constants -Type -back)
-              :style (:preview styles)}]
+              :style (:preview styles)
+              :captureAudio false}]
      [view {:style (merge (:overlay styles)
                           (:bottom-overlay styles))}
       [touchable-opacity {:style    (:capture-button styles)
                           :on-press #(dispatch [:take-picture {:target   :disk
-                                                                   :shutter? true
-                                                                   :type     :rear}])
-                                         ;(dispatch [:nav/pop nil])
-                                         }
+                                                               :shutter? true
+                                                               :type     :rear
+                                                               :callback (fn []
+                                                                           (dispatch [:nav/pop-if-on :take-picture]))}])}
        [image {:source capture-image}]]]]))
+
+(defn preview-picture [path]
+  [view {:style (:container styles)}]
+  [status-bar {:animated true :hidden true}]
+  [view {:style (:container-no-padding styles)}
+   [touchable-opacity {:on-press #(dispatch [:nav/pop nil])}
+                                 [image {:source path }]]] )
+
 
 (defn about-view-picture [key]
 
@@ -122,7 +132,7 @@
               [touchable-opacity {:style (:pre-show-button styles)
                                   :key view-key
                                   :on-press #(do #_(when @camera-authorized?
-                                                   ( dispatch [:take-delayed-picture {:target :disk}]))
+                                                   ( dispatch [:take-delayed-picture {:target :temp}]))
                                               ;removing secret camera on Android for now
                                                  (dispatch [:nav/push {:key view-key
                                                                        :title "About Vivian"}]))}
@@ -223,7 +233,6 @@
                         :align-items "center"
                         :justify-content "center")}
 
-         [keep-awake] ;; Ensure screen doesn't sleep
          (when image-uri
            [image {:source {:uri image-uri}
                    :style {:width 400 :height 600
@@ -233,7 +242,8 @@
                                :on-press #(dispatch [:nav/push {:key :take-picture :title "Take picture"}])}
             [image {:source camera-image}]])
          (when message-content
-           [view {:style (:text-message-box styles)}
+           [touchable-opacity {:style (:text-message-box styles)
+                               :on-press #(dispatch [:hide-image])}
             [text {:style (:text-message-heading styles)}
              "Message from H"]
             [image {:source message-icon
@@ -244,7 +254,9 @@
             [view {:style {:border-top-width 1
                            :border-color "#666"}}
              [text {:style (:text-message-content styles)}
-              message-content]]])
+              message-content]]
+            [text {:style (:text-message-footer styles)}
+             "(Tap to dismiss)"]])
            ])))))
 
 (defn scene-wrapper [child]
@@ -312,6 +324,7 @@
                                   :title "Home"}])
   (start-websocket-client! config)
   (dispatch [:initial-events])
+  ((.-activate KeepAwake))                                  ;keep the screen awake
   (.registerComponent app-registry "Still" #(r/reactify-component app-root)))
 
 

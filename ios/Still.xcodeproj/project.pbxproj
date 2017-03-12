@@ -22,6 +22,7 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
+		4603EBE71E426CCF001EE9DF /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4603EBDD1E426CB9001EE9DF /* libRCTPushNotification.a */; };
 		4627D9921DDDDA45003B3D1D /* libRCTCameraRoll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4627D9911DDDDA1B003B3D1D /* libRCTCameraRoll.a */; };
 		46F8CB861DC4058900339A2A /* american-typewriter.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 46F8CB851DC4058900339A2A /* american-typewriter.ttf */; };
 		46F8CBCD1DC8AA6500339A2A /* libAppHub.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46F8CBCA1DC8A98B00339A2A /* libAppHub.a */; };
@@ -100,6 +101,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 83CBBA2E1A601D0E00E9B192;
 			remoteInfo = React;
+		};
+		4603EBDC1E426CB9001EE9DF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4603EBCD1E426CB9001EE9DF /* RCTPushNotification.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RCTPushNotification;
 		};
 		4627D9901DDDDA1B003B3D1D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -203,6 +211,7 @@
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
 		27E0F7E6B4BB41CC98BED95C /* RNFetchBlob.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFetchBlob.xcodeproj; path = "../node_modules/react-native-fetch-blob/ios/RNFetchBlob.xcodeproj"; sourceTree = "<group>"; };
 		28EB93B94A13485895C41649 /* KCKeepAwake.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = KCKeepAwake.xcodeproj; path = "../node_modules/react-native-keep-awake/ios/KCKeepAwake.xcodeproj"; sourceTree = "<group>"; };
+		4603EBCD1E426CB9001EE9DF /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
 		4627D98C1DDDDA1B003B3D1D /* RCTCameraRoll.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTCameraRoll.xcodeproj; path = "../../still/node_modules/react-native/Libraries/CameraRoll/RCTCameraRoll.xcodeproj"; sourceTree = "<group>"; };
 		46F8CB851DC4058900339A2A /* american-typewriter.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "american-typewriter.ttf"; path = "../american-typewriter.ttf"; sourceTree = "<group>"; };
 		46F8CBC21DC8A98900339A2A /* AppHub.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AppHub.xcodeproj; path = ../node_modules/apphub/AppHub/AppHub.xcodeproj; sourceTree = "<group>"; };
@@ -232,6 +241,7 @@
 				46F8CBD21DC8AA7F00339A2A /* libz.tbd in Frameworks */,
 				46F8CBD01DC8AA7100339A2A /* SystemConfiguration.framework in Frameworks */,
 				46F8CBCD1DC8AA6500339A2A /* libAppHub.a in Frameworks */,
+				4603EBE71E426CCF001EE9DF /* libRCTPushNotification.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
 				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
 				4627D9921DDDDA45003B3D1D /* libRCTCameraRoll.a in Frameworks */,
@@ -350,6 +360,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		4603EBCE1E426CB9001EE9DF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4603EBDD1E426CB9001EE9DF /* libRCTPushNotification.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		4627D98D1DDDDA1B003B3D1D /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -411,6 +429,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				4603EBCD1E426CB9001EE9DF /* RCTPushNotification.xcodeproj */,
 				4627D98C1DDDDA1B003B3D1D /* RCTCameraRoll.xcodeproj */,
 				46F8CBC21DC8A98900339A2A /* AppHub.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
@@ -596,6 +615,10 @@
 					ProjectRef = 00C302D31ABCB9D200DB3ED1 /* RCTNetwork.xcodeproj */;
 				},
 				{
+					ProductGroup = 4603EBCE1E426CB9001EE9DF /* Products */;
+					ProjectRef = 4603EBCD1E426CB9001EE9DF /* RCTPushNotification.xcodeproj */;
+				},
+				{
 					ProductGroup = 139105B71AF99BAD00B5F7CC /* Products */;
 					ProjectRef = 139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */;
 				},
@@ -695,6 +718,13 @@
 			fileType = archive.ar;
 			path = libReact.a;
 			remoteRef = 146834031AC3E56700842450 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4603EBDD1E426CB9001EE9DF /* libRCTPushNotification.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTPushNotification.a;
+			remoteRef = 4603EBDC1E426CB9001EE9DF /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		4627D9911DDDDA1B003B3D1D /* libRCTCameraRoll.a */ = {
@@ -916,6 +946,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../node_modules/react-native/Libraries/**",
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
 					"$(SRCROOT)/../../React/**",
@@ -951,6 +982,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../node_modules/react-native/Libraries/**",
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
 					"$(SRCROOT)/../../React/**",

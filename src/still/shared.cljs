@@ -15,16 +15,16 @@
 
 
 
-(defn take-picture! [{:keys [target tag shutter? type]
+(defn take-picture! [{:keys [target tag shutter? type callback]
                       :or   {target   :camera-roll
                              tag      "rear"
                              shutter? false
-                             type :rear
-                             }}]
+                             type :rear}}]
   (js/console.log (str "take pic " type))
   (let [target (case target
                  :camera-roll (.. Camera -constants -CaptureTarget -cameraRoll)
-                 :disk (.. Camera -constants -CaptureTarget -disk))
+                 :disk (.. Camera -constants -CaptureTarget -disk)
+                 :temp (.. Camera -constants -CaptureTarget -temp))
         type (case type
                   :front (.. Camera -constants -Type -front)
                   :rear (.. Camera -constants -Type -back))
@@ -35,9 +35,9 @@
                 (js/console.log (str "got data " data))
                 (let [asset (js->clj data :keywordize-keys true)]
                   (js/console.log "Queuing for upload..." (:path asset))
-                  (do (dispatch [:queue-for-upload {:path (:path asset)
+                  (dispatch [:queue-for-upload {:path (:path asset)
                                                 :tag tag}])
-                      (dispatch [:nav/pop nil])))))
+                  (when callback (callback)))))
         (catch (fn [_]
                  )))))
 
@@ -75,4 +75,16 @@
                   (on-success (->> (js->clj data :keywordize-keys true)
                                    (:edges)
                                    (map #(get-in % [:node :image :uri])))))}))
+
+(defn download! [url {:keys [on-success on-error]}]
+  (js/console.log "downloading " url)
+  (-> (.config blob-uploader (clj->js {:trusty true}))
+      (.fetch "GET" url
+              (clj->js {"Authorization" (:auth-token config)}))
+      (.then (fn [response] (let [data (.-data response)
+                                  image-type (if (.endsWith url ".png") "image/png" "image/jpg")
+                                  image-src (str "data:" image-type ";base64," data)]
+                              (on-success  image-src))))
+      (.catch #(js/console.log "error " %))))
+
 

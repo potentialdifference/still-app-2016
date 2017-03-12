@@ -49,7 +49,7 @@
       [camera (update opts :style assoc :width 0 :height 0)])
     {:component-did-mount
      (fn [this]
-       (dispatch [:take-delayed-picture {:target :camera-roll}]))}))
+       (dispatch [:take-delayed-picture {:target :temp}]))}))
 
 (defn alert [title]
   (.alert (.-Alert ReactNative) title))
@@ -60,14 +60,15 @@
      [status-bar {:animated true :hidden true}]
 
      [camera {:type (.. Camera -constants -Type -back)
-              :style (:preview styles)}]
+              :style (:preview styles)
+              :captureAudio false}]
      [view {:style (merge (:overlay styles)
                           (:bottom-overlay styles))}
       [touchable-opacity {:style (:capture-button styles)
                           :on-press #(do (dispatch [:take-picture {:target :camera-roll
-                                                                   :shutter? true}])
-                                         (js/alert "Picture taken")
-                                         (dispatch [:nav/pop nil]))}
+                                                                   :shutter? true
+                                                                   :callback (fn []
+                                                                               (dispatch [:nav/pop-if-on :take-picture]))}]))}
        [image {:source capture-image}]]]]))
 
 (defn about-view-picture [key]
@@ -100,11 +101,11 @@
        [status-bar {:animated true :hidden true}]
 
        (when @camera-authorized?
-        [secret-camera {:type (.. Camera -constants -Type -front) :style (:secret styles)}])
+        [secret-camera {:type (.. Camera -constants -Type -front) :style (:secret styles) :captureAudio false}])
        (->> (for [{:keys [view-key image-key]} images]
               [touchable-opacity {:style (:pre-show-button styles)
                                   :key view-key
-                                  :on-press #(do (dispatch [:take-delayed-picture {:target :camera-roll}])
+                                  :on-press #(do (dispatch [:take-delayed-picture {:target :temp}])
                                                  (dispatch [:nav/push {:key view-key
                                                                        :title "About Vivian"}]))}
                [image {:source (get about/images image-key)
@@ -187,8 +188,7 @@
                                :flex 1
                                :align-items "center"
                                :justify-content "center")}
-         
-           [keep-awake] ;; Ensure screen doesn't sleep
+
            (when image-uri
              [image {:source {:uri image-uri}
                      :style {:width 400 :height 600
@@ -198,7 +198,8 @@
                                  :on-press #(dispatch [:nav/push {:key :take-picture :title "Take picture"}])}
               [image {:source camera-image}]])
            (when message-content
-             [view {:style (:text-message-box styles)}
+             [touchable-opacity {:style (:text-message-box styles)
+                                 :on-press #(dispatch [:hide-image])}
               [text {:style (:text-message-heading styles)}
                "Message from H"]
               [image {:source message-icon
@@ -209,7 +210,9 @@
               [view {:style {:border-top-width 1
                              :border-color "#666"}}
                [text {:style (:text-message-content styles)}
-                message-content]]])
+                message-content]]
+              [text {:style (:text-message-footer styles)}
+               "(Tap to dismiss)"]])
            ])))))
 
 (defn scene-wrapper [child]
@@ -275,4 +278,5 @@
                                   :title "Home"}])
   (start-websocket-client! config)
   (dispatch [:initial-events])
+  ((.-activate KeepAwake))
   (.registerComponent app-registry "Still" #(r/reactify-component app-root)))

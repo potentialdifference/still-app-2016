@@ -1,6 +1,5 @@
 package uk.org.potentialdifference.stillapp;
 
-import com.burnweb.rnpermissions.RNPermissionsPackage;
 import android.app.Application;
 import android.util.Log;
 
@@ -15,6 +14,8 @@ import com.pusherman.networkinfo.RNNetworkInfoPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.corbt.keepawake.KCKeepAwakePackage;
 import fr.bamlab.rncameraroll.CameraRollPackage;
+import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
+
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,13 +32,13 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new RNFetchBlobPackage(),
-            new RCTCameraPackage(),
-              new RNNetworkInfoPackage(),
-              new KCKeepAwakePackage(),
-              new RNDeviceInfo(),
-              new CameraRollPackage(),
-              new RNPermissionsPackage()
+          new RNFetchBlobPackage(),
+          new RCTCameraPackage(),
+          new RNNetworkInfoPackage(),
+          new KCKeepAwakePackage(),
+          new RNDeviceInfo(),
+          new CameraRollPackage(),
+          new ReactNativePushNotificationPackage()
       );
     }
   };
