@@ -25,6 +25,10 @@ Before making a build, you will need to adjust the settings in config.cljs. In p
  - valid-ssids will need to include the SSID of the WiFi network the still server is running on
  - the auth token will need to match the auth token you hvae configured in the still server
 
+To make a build of the app for Android or iOS, follow the instructions at https://github.com/drapanjanas/re-natal
+
+Many thanks to the developers of re-natal and the numerous react native plugins we rely on.
+
 ## License
 
 Copyright © 2016 Potential Difference
